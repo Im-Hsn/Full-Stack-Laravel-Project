@@ -1,0 +1,89 @@
+Table Users {
+    id INT [primary key]
+    name VARCHAR(255)
+    email VARCHAR(255) [unique]
+    password VARCHAR(255)
+    role ENUM('guest', 'host')
+    profile_image VARCHAR(255)
+    identity_image VARCHAR(255)
+    phone_number VARCHAR(15)
+    address TEXT
+    created_at TIMESTAMP
+    updated_at TIMESTAMP
+}
+
+Table Properties {
+    id INT [primary key]
+    user_id INT [ref: > Users.id]
+    title VARCHAR(255)
+    description TEXT
+    location VARCHAR(255)
+    latitude DECIMAL(10,7)
+    longitude DECIMAL(10,7)
+    price_per_night DECIMAL(10,2)
+    cleaning_fee DECIMAL(10,2)
+    security_deposit DECIMAL(10,2)
+    cancellation_policy TEXT
+    is_active BOOLEAN
+    created_at TIMESTAMP
+    updated_at TIMESTAMP
+}
+
+Table Property_Amenities {
+    id INT [primary key]
+    property_id INT [ref: > Properties.id]
+    amenity VARCHAR(255)
+}
+
+Table Bookings {
+    id INT [primary key]
+    property_id INT [ref: > Properties.id]
+    user_id INT [ref: > Users.id]
+    check_in_date DATE
+    check_out_date DATE
+    total_price DECIMAL(10,2)
+    status ENUM('pending', 'confirmed', 'cancelled')
+    created_at TIMESTAMP
+    updated_at TIMESTAMP
+}
+
+Table Payments {
+    id INT [primary key]
+    booking_id INT [ref: > Bookings.id]
+    amount DECIMAL(10,2)
+    payment_method VARCHAR(50)
+    status ENUM('completed', 'failed', 'pending')
+    created_at TIMESTAMP
+}
+
+Table Reviews {
+    id INT [primary key]
+    property_id INT [ref: > Properties.id]
+    user_id INT [ref: > Users.id]
+    rating TINYINT
+    comment TEXT
+    created_at TIMESTAMP
+}
+
+Table Messages {
+    id INT [primary key]
+    sender_id INT [ref: > Users.id]
+    receiver_id INT [ref: > Users.id]
+    content TEXT
+    created_at TIMESTAMP
+}
+
+Table Notifications {
+    id INT [primary key]
+    user_id INT [ref: > Users.id]
+    content TEXT
+    read BOOLEAN
+    created_at TIMESTAMP
+}
+
+Table Earnings {
+    id INT [primary key]
+    user_id INT [ref: > Users.id]
+    amount DECIMAL(10,2)
+    created_at TIMESTAMP
+}
