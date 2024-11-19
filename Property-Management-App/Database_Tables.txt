@@ -24,7 +24,9 @@ Table Properties {
     cleaning_fee DECIMAL(10,2)
     security_deposit DECIMAL(10,2)
     cancellation_policy TEXT
-    is_active BOOLEAN
+    start_date DATE
+    end_date DATE
+    is_available BOOLEAN
     created_at TIMESTAMP
     updated_at TIMESTAMP
 }

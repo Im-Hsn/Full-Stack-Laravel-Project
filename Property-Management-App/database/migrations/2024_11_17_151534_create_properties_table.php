@@ -20,7 +20,9 @@ class CreatePropertiesTable extends Migration
             $table->decimal('cleaning_fee', 10, 2)->nullable();
             $table->decimal('security_deposit', 10, 2)->nullable();
             $table->text('cancellation_policy')->nullable();
-            $table->boolean('is_active')->default(true);
+            $table->date('start_date')->nullable();
+            $table->date('end_date')->nullable();
+            $table->boolean('is_available')->default(true);
             $table->timestamps();
         });
     }
