@@ -17,6 +17,7 @@ Table Properties {
     user_id INT [ref: > Users.id]
     title VARCHAR(255)
     description TEXT
+    images_path VARCHAR(255)
     location VARCHAR(255)
     latitude DECIMAL(10,7)
     longitude DECIMAL(10,7)
