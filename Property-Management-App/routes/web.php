@@ -6,6 +6,7 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+<<<<<<< HEAD
 Route::get('/ListProperty',function(){
 <<<<<<< HEAD
 return view('propertylisting');
@@ -13,6 +14,8 @@ return view('propertylisting');
     return view('propertylisting');
     });
 
+=======
+>>>>>>> parent of 4e5b079 (Fixing the Merge error)
 // Test email route
 Route::get('/test-email/{status}/{bookingId}', function ($status, $bookingId) {
     Mail::to('host@example.com')->send(new BookingStatusMail($status, $bookingId));
