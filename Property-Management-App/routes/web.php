@@ -1,22 +1,37 @@
 <?php
 
+// use Illuminate\Support\Facades\Route;
+// use App\Mail\BookingStatusMail;
+// use Illuminate\Support\Facades\Mail;
+// use app\Models\Booking;
+// Route::get('/', function () {
+//     return view('welcome');
+// });
+
+
+
+// Route::get('/test-email/{status}/{bookingId}', function ($status, $bookingId) {
+//     $viewPath = resource_path('views/email-test.blade.php');
+//     if (!file_exists($viewPath)) {
+//         dd("View file not found at: " . $viewPath);
+//     }
+//     Mail::to('your-email@example.com')->send(new BookingStatusMail($status, $bookingId));
+//     return view('email-test', compact('status', 'bookingId'));
+// });
+
 use Illuminate\Support\Facades\Route;
+use App\Models\Booking;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\BookingStatusMail;
 
 Route::get('/', function () {
     return view('welcome');
 });
 
-<<<<<<< HEAD
-<<<<<<< HEAD
 Route::get('/ListProperty',function(){
-<<<<<<< HEAD
-return view('propertylisting');
-=======
     return view('propertylisting');
     });
 
-=======
->>>>>>> parent of 4e5b079 (Fixing the Merge error)
 // Test email route
 Route::get('/test-email/{status}/{bookingId}', function ($status, $bookingId) {
     Mail::to('host@example.com')->send(new BookingStatusMail($status, $bookingId));
@@ -59,9 +74,4 @@ Route::get('/booking/cancel/{bookingId}', function ($bookingId) {
     $booking->save();
 
     return "Booking #{$bookingId} has been cancelled.";
->>>>>>> parent of f046139 (Revert "Fixing the Merge error")
-=======
-Route::get('/ListProperty',function(){
-return view('propertylisting');
->>>>>>> parent of 2b5b7d5 (Merge branch 'main' of https://github.com/Im-Hsn/Full-Stack-Laravel-Project)
 });
