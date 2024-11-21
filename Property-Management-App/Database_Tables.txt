@@ -17,6 +17,7 @@ Table Properties {
     user_id INT [ref: > Users.id]
     title VARCHAR(255)
     description TEXT
+    images_path VARCHAR(255)
     location VARCHAR(255)
     latitude DECIMAL(10,7)
     longitude DECIMAL(10,7)
@@ -24,7 +25,9 @@ Table Properties {
     cleaning_fee DECIMAL(10,2)
     security_deposit DECIMAL(10,2)
     cancellation_policy TEXT
-    is_active BOOLEAN
+    start_date DATE
+    end_date DATE
+    is_available BOOLEAN
     created_at TIMESTAMP
     updated_at TIMESTAMP
 }

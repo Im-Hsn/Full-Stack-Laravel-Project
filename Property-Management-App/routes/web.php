@@ -1,32 +1,17 @@
 <?php
 
-// use Illuminate\Support\Facades\Route;
-// use App\Mail\BookingStatusMail;
-// use Illuminate\Support\Facades\Mail;
-// use app\Models\Booking;
-// Route::get('/', function () {
-//     return view('welcome');
-// });
-
-
-
-// Route::get('/test-email/{status}/{bookingId}', function ($status, $bookingId) {
-//     $viewPath = resource_path('views/email-test.blade.php');
-//     if (!file_exists($viewPath)) {
-//         dd("View file not found at: " . $viewPath);
-//     }
-//     Mail::to('your-email@example.com')->send(new BookingStatusMail($status, $bookingId));
-//     return view('email-test', compact('status', 'bookingId'));
-// });
-
 use Illuminate\Support\Facades\Route;
-use App\Models\Booking;
-use Illuminate\Support\Facades\Mail;
-use App\Mail\BookingStatusMail;
 
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::get('/ListProperty',function(){
+<<<<<<< HEAD
+return view('propertylisting');
+=======
+    return view('propertylisting');
+    });
 
 // Test email route
 Route::get('/test-email/{status}/{bookingId}', function ($status, $bookingId) {
@@ -70,4 +55,5 @@ Route::get('/booking/cancel/{bookingId}', function ($bookingId) {
     $booking->save();
 
     return "Booking #{$bookingId} has been cancelled.";
+>>>>>>> parent of f046139 (Revert "Fixing the Merge error")
 });
