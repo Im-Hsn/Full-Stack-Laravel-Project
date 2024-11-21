@@ -7,6 +7,7 @@ Route::get('/', function () {
 });
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 Route::get('/ListProperty',function(){
 <<<<<<< HEAD
 return view('propertylisting');
@@ -59,4 +60,8 @@ Route::get('/booking/cancel/{bookingId}', function ($bookingId) {
 
     return "Booking #{$bookingId} has been cancelled.";
 >>>>>>> parent of f046139 (Revert "Fixing the Merge error")
+=======
+Route::get('/ListProperty',function(){
+return view('propertylisting');
+>>>>>>> parent of 2b5b7d5 (Merge branch 'main' of https://github.com/Im-Hsn/Full-Stack-Laravel-Project)
 });
