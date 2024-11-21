@@ -28,10 +28,6 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/ListProperty',function(){
-    return view('propertylisting');
-    });
-
 // Test email route
 Route::get('/test-email/{status}/{bookingId}', function ($status, $bookingId) {
     Mail::to('host@example.com')->send(new BookingStatusMail($status, $bookingId));
