@@ -5,12 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'Property Management App')</title>
 
-    <!-- Tailwind CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    
-    <!-- Google Maps API -->
-    <script src="https://maps.googleapis.com/maps/api/js?key={{ env('GOOGLE_MAPS_API_KEY') }}&libraries=places" async defer></script>
-    
     <!-- Additional head content -->
     @yield('head')
 </head>
@@ -53,7 +47,14 @@
         <p class="text-gray-600">&copy; {{ date('Y') }} Property Management. All rights reserved.</p>
     </footer>
 
+    <!-- Scripts -->
+    <!-- Google Maps API -->
+    <script src="https://maps.googleapis.com/maps/api/js?key={{ env('GOOGLE_MAPS_API_KEY') }}&libraries=places" async defer></script>
+
+    <!-- Tailwind CSS (via CDN) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
     <!-- Additional scripts -->
-    @yield('scripts')
+    @stack('scripts')
 </body>
 </html>
