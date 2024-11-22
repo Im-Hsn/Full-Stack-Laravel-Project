@@ -1,3 +1,14 @@
+<!-- <!DOCTYPE html>
+<html>
+<head>
+    <title>Booking Status</title>
+</head>
+<body>
+    <h1>Your booking has been {{ $status }}</h1>
+    <p>Booking ID: {{ $bookingId }}</p>
+</body>
+</html> -->
+
 <!DOCTYPE html>
 <html>
 <head>

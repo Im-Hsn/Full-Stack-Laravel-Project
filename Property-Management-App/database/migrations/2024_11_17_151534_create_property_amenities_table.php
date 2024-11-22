@@ -11,7 +11,7 @@ class CreatePropertyAmenitiesTable extends Migration
         Schema::create('property_amenities', function (Blueprint $table) {
             $table->id();
             $table->foreignId('property_id')->constrained()->onDelete('cascade');
-            $table->string('amenity');
+            $table->foreignId('amenity_id')->constrained('amenities')->onDelete('cascade');
         });
     }
 

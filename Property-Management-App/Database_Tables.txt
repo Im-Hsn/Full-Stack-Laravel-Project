@@ -31,11 +31,16 @@ Table Properties {
     created_at TIMESTAMP
     updated_at TIMESTAMP
 }
-
+Table amenities{
+    id INT [primary key]
+    amenity varchar(255)	
+}
 Table Property_Amenities {
     id INT [primary key]
     property_id INT [ref: > Properties.id]
-    amenity VARCHAR(255)
+    amenity_id INT [ref: > amenities.id]
+    created_at TIMESTAMP
+    updated_at TIMESTAMP
 }
 
 Table Bookings {

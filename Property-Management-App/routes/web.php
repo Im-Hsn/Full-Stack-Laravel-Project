@@ -23,6 +23,7 @@ use Illuminate\Support\Facades\Route;
 use App\Models\Booking;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\BookingStatusMail;
+use App\Http\Controllers\PropertyController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -31,6 +32,7 @@ Route::get('/', function () {
 Route::get('/ListProperty',function(){
     return view('propertylisting');
     });
+Route::get('/ListProperty',[PropertyController::class, 'listamenities']);
 
 // Test email route
 Route::get('/test-email/{status}/{bookingId}', function ($status, $bookingId) {

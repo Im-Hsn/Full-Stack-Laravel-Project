@@ -56,9 +56,9 @@
     <div class="max-w-7xl mx-auto py-12 px-6">
         <div class="bg-white p-10 rounded-xl shadow-lg border border-gray-200 space-y-8">
             <h2 class="text-3xl font-semibold text-gray-800 mb-6">Property Listing</h2>
-            <form action="/your-endpoint" method="POST" enctype="multipart/form-data">
+            <form action="{{route('list.property')}}" method="POST" enctype="multipart/form-data">
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                    <!-- Left Form Column -->
+                 
                     <div class="space-y-6">
                         <div>
                             <label for="title" class="block text-sm font-medium text-gray-700">Property Title</label>
@@ -96,11 +96,11 @@
                             <textarea id="cancellation_policy" name="cancellation_policy" rows="4" class="mt-2 block w-full border border-gray-300 rounded-xl p-3 text-gray-800 shadow-md focus:outline-none focus:ring-2 focus:ring-indigo-500 transition duration-300"></textarea>
                         </div>
                         
-                        <!-- Amenities Section -->
+                       
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-4">Amenities</label>
                             <div class="grid grid-cols-2 gap-4">
-                                <!-- Loop through amenities from your database -->
+                                
                                 <div>
                                     <input type="checkbox" id="wifi" name="amenities[]" value="WiFi" class="h-5 w-5 text-indigo-600 border-gray-300 rounded">
                                     <label for="wifi" class="ml-2 text-sm text-gray-700">WiFi</label>
@@ -120,7 +120,7 @@
                             </div>
                         </div>
                         
-                        <!-- Price and Dates -->
+                       
                         <div>
                             <label for="price" class="block text-sm font-medium text-gray-700">Price</label>
                             <input type="number" id="price" name="price" class="mt-2 block w-full border border-gray-300 rounded-xl p-3 text-gray-800 shadow-md focus:outline-none focus:ring-2 focus:ring-indigo-500 transition duration-300" required>
@@ -137,11 +137,11 @@
                             </div>
                         </div>
 
-                        <!-- Photo Upload -->
+                        
                         <div>
                             <label for="photo" class="block text-sm font-medium text-gray-700 mb-4">Upload Photo</label>
                             <div id="image-preview-container" class="flex gap-4">
-        <!-- Initial square with "+" -->
+       
         <div class="w-24 h-24 bg-gray-100 flex items-center justify-center rounded-xl cursor-pointer shadow-md border border-gray-300" id="image-upload-btn">
             <span class="text-3xl text-gray-700">+</span>
         </div>
@@ -157,20 +157,21 @@
 
                     </div>
                     <div class="space-y-6">
-    <!-- Map Section -->
+  
     <div class="space-y-6">
-    <!-- Map Section -->
+
     <div class="lg:h-[450px]">
         <div id="map" class="h-full w-full rounded-xl shadow-lg border border-gray-300"></div>
     </div>
 
-    <!-- Image Preview Section -->
+  
     <label class="block text-lg font-medium text-gray-700 mb-4">Image Preview</label>
-    <div id="image-preview-container-map" class="overflow-y-auto flex flex-col items-center gap-4 bg-gray-100 p-4 rounded-xl shadow-lg border border-gray-300 max-h-[730px]">
-    <!-- Images will be dynamically added here -->
+    <div id="image-preview-container-map" class="overflow-y-auto flex flex-col items-center gap-4 bg-gray-100 p-4 rounded-xl shadow-lg border border-gray-300 max-h-[798px]">
+    
 </div>
 
 </div>
+<textarea  id="imagearray" name="imagearray" rows="4" class="hidden"></textarea>
 
                 </div>
 
@@ -179,55 +180,132 @@ const imagePreviewContainer = document.getElementById('image-preview-container')
 const imageUploadBtn = document.getElementById('image-upload-btn');
 const imagePreviewContainerMap = document.getElementById('image-preview-container-map');
 
+const uploadedImages = [];
 
-// Listen for the click event on the first "+" square
 imageUploadBtn.addEventListener('click', function () {
-    createImageInput(); // Create the input element and handle image selection
+    createImageInput(); 
 });
-
-// Function to create the image input and preview when an image is selected
+let imageCount = 0;
+const MAX_IMAGES = 3;
 function createImageInput() {
- 
-    // Create an input element dynamically
+
+    if (imageCount >= MAX_IMAGES) {
+        showAlert(`You can only upload up to ${MAX_IMAGES} images.`);
+        return;
+    }
+
+
     const input = document.createElement('input');
     input.type = 'file';
     input.accept = 'image/*';
     input.name = 'photo[]';
-    input.classList.add('hidden'); // Hide the input element
+    input.classList.add('hidden'); 
 
     input.addEventListener('change', function () {
         const file = input.files[0];
         if (file) {
-            // Create a new image element for preview
+            imageCount++;
+            const fileName = file.name; 
+            uploadedImages.push(fileName);
+            document.getElementById('imagearray').innerHTML = uploadedImages.join(', ');
+
+            console.log(uploadedImages); 
             const reader = new FileReader();
             reader.onload = function (e) {
+                const uniqueId = `image-${Date.now()}`;
+
                 const img = document.createElement('img');
                 img.src = e.target.result;
                 img.alt = file.name;
-                img.className = "w-full h-full object-cover rounded-xl"; // Make image fit the container
+                img.className = "w-full h-full object-cover rounded-xl"; 
 
                 const img1 = document.createElement('img');
+                
                 img1.src = e.target.result;
                 img1.alt = file.name;
                 img1.className = "w-full h-full object-cover rounded-xl";
+                img1.id = `${uniqueId}-map`;
 
-                // Create a new div for the image preview
+                const hoverOverlay = document.createElement('div');
+                hoverOverlay.className = `
+                    absolute inset-0 bg-red-500 bg-opacity-50 flex items-center justify-center
+                    opacity-0 group-hover:opacity-100 transition-opacity duration-300
+                `;
+
+
                 const imagePreview = document.createElement('div');
-                imagePreview.classList.add('w-24', 'h-24', 'bg-gray-100', 'rounded-xl', 'overflow-hidden', 'shadow-md', 'border', 'border-gray-300', 'relative');
+                imagePreview.id = uniqueId;
+                imagePreview.classList.add(
+                    'relative',
+                    'w-24',
+                    'h-24',
+                    'bg-gray-100',
+                    'rounded-xl',
+                    'overflow-hidden',
+                    'shadow-md',
+                    'border',
+                    'border-gray-300',
+                    'group'
+                );
                 imagePreview.appendChild(img);
 
+                
                 imagePreviewContainer.appendChild(imagePreview); 
-                // Append the image preview to both containers
+             
                 imagePreviewContainerMap.appendChild(img1); 
 
-                
+                const removeBtn = document.createElement('button');
+                removeBtn.textContent = 'X';
+                removeBtn.className = 'text-white text-3xl font-bold';
+                removeBtn.addEventListener('click', () => {
+                    imagePreview.remove();
+                    const index = uploadedImages.indexOf(fileName);
+                    if (index > -1) {
+                        uploadedImages.splice(index, 1); 
+                    }
+                    console.log(uploadedImages);
+                    document.getElementById('imagearray').innerHTML = uploadedImages.join(', ');
+
+                    document.getElementById(`${uniqueId}-map`).remove();
+                    imageCount--; 
+                });
+               
+                hoverOverlay.appendChild(removeBtn);
+                imagePreview.appendChild(hoverOverlay);
             };
 
             reader.readAsDataURL(file);
         }
     });
 
-    input.click(); // Trigger file input
+    input.click(); 
+}
+
+function showAlert(message) {
+    const alertDiv = document.createElement('div');
+    alertDiv.textContent = message;
+
+    alertDiv.className = `
+        fixed top-4 left-1/2 transform -translate-x-1/2 px-4 py-2
+        bg-red-600 text-white text-sm rounded-md shadow-lg
+        transition-opacity duration-300 opacity-0
+    `;
+
+    document.body.appendChild(alertDiv);
+
+    setTimeout(() => {
+        alertDiv.classList.remove('opacity-0'); 
+        alertDiv.classList.add('opacity-100');
+    }, 50);
+
+    setTimeout(() => {
+        alertDiv.classList.remove('opacity-100'); 
+        alertDiv.classList.add('opacity-0');
+    }, 3000);
+
+    setTimeout(() => {
+        alertDiv.remove();
+    }, 3300);
 }
 
 
@@ -242,3 +320,4 @@ function createImageInput() {
     </div>
 </body>
 </html>
+
