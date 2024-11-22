@@ -48,8 +48,21 @@
     </footer>
 
     <!-- Scripts -->
-    <!-- Google Maps API -->
-    <script src="https://maps.googleapis.com/maps/api/js?key={{ env('GOOGLE_MAPS_API_KEY') }}&libraries=places" async defer></script>
+    <!-- Google Maps API (Check if key is present) -->
+    <script>
+        var googleMapsApiKey = '{{ env("GOOGLE_MAPS_API_KEY") }}';
+        if (googleMapsApiKey) {
+            // Load the Google Maps API with the provided key
+            var script = document.createElement('script');
+            script.src = "https://maps.googleapis.com/maps/api/js?key=" + googleMapsApiKey + "&libraries=places";
+            script.async = true;
+            script.defer = true;
+            document.head.appendChild(script);
+        } else {
+            console.log("Google Maps API key is missing. Map cannot be loaded.");
+            // Optionally, display an "Oops" message or fallback UI here
+        }
+    </script>
 
     <!-- Tailwind CSS (via CDN) -->
     <script src="https://cdn.tailwindcss.com"></script>
