@@ -48,10 +48,14 @@
 @endpush
 
 @section('content')
+
+
     <div class="max-w-7xl mx-auto py-12 px-6">
         <div class="bg-white p-10 rounded-xl shadow-lg border border-gray-200 space-y-8">
             <h2 class="text-3xl font-semibold text-gray-800 mb-6">Property Listing</h2>
-            <form action="{{route('list.property')}}" method="POST" enctype="multipart/form-data">
+            <form  action="{{route('insert.property')}}" method="POST" enctype="multipart/form-data">
+            <meta name="csrf-token" content="{{ csrf_token() }}">
+            @csrf
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
                  
                     <div class="space-y-6">
@@ -95,23 +99,13 @@
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-4">Amenities</label>
                             <div class="grid grid-cols-2 gap-4">
-                                
+                                @foreach ($amenities as $amenity )
                                 <div>
-                                    <input type="checkbox" id="wifi" name="amenities[]" value="WiFi" class="h-5 w-5 text-indigo-600 border-gray-300 rounded">
-                                    <label for="wifi" class="ml-2 text-sm text-gray-700">WiFi</label>
+                                    <input type="checkbox" id="{{$amenity->amenity}}" name="amenities[]" value="{{$amenity->amenity}}" class="h-5 w-5 text-indigo-600 border-gray-300 rounded">
+                                    <label for="wifi" class="ml-2 text-sm text-gray-700">{{$amenity->amenity}}</label>
                                 </div>
-                                <div>
-                                    <input type="checkbox" id="pool" name="amenities[]" value="Pool" class="h-5 w-5 text-indigo-600 border-gray-300 rounded">
-                                    <label for="pool" class="ml-2 text-sm text-gray-700">Pool</label>
-                                </div>
-                                <div>
-                                    <input type="checkbox" id="parking" name="amenities[]" value="Parking" class="h-5 w-5 text-indigo-600 border-gray-300 rounded">
-                                    <label for="parking" class="ml-2 text-sm text-gray-700">Parking</label>
-                                </div>
-                                <div>
-                                    <input type="checkbox" id="gym" name="amenities[]" value="Gym" class="h-5 w-5 text-indigo-600 border-gray-300 rounded">
-                                    <label for="gym" class="ml-2 text-sm text-gray-700">Gym</label>
-                                </div>
+                                @endforeach
+                           
                             </div>
                         </div>
                         
@@ -204,7 +198,7 @@ function createImageInput() {
             const fileName = file.name; 
             uploadedImages.push(fileName);
             document.getElementById('imagearray').innerHTML = uploadedImages.join(', ');
-
+            uploadImage(file);
             console.log(uploadedImages); 
             const reader = new FileReader();
             reader.onload = function (e) {
@@ -264,6 +258,7 @@ function createImageInput() {
 
                     document.getElementById(`${uniqueId}-map`).remove();
                     imageCount--; 
+                    deleteImage(fileName);
                 });
                
                 hoverOverlay.appendChild(removeBtn);
@@ -276,6 +271,46 @@ function createImageInput() {
 
     input.click(); 
 }
+function uploadImage(file) {
+        const formData = new FormData();
+        formData.append('image', file);
+    
+        return fetch('/upload-image', {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+            },
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+               console.log('image added!');
+            } else {
+                throw new Error('Image upload failed');
+            }
+        });
+    }
+    
+    function deleteImage(fileName) {
+        fetch('/delete-image', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+            },
+            body: JSON.stringify({ fileName }),
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                console.log('Image deleted:', fileName);
+            } else {
+                console.error('Error deleting image:', data.message);
+            }
+        })
+        .catch(error => console.error('Error deleting image:', error));
+    }
 
 function showAlert(message) {
     const alertDiv = document.createElement('div');

@@ -11,14 +11,14 @@
 <body class="bg-gray-100 flex flex-col min-h-screen">
     <header class="bg-white shadow-md">
         <div class="container mx-auto p-4 flex justify-between items-center">
-            <a href="{{ route('home') }}" class="text-2xl font-bold text-gray-800">Property Management</a>
+            <a href="" class="text-2xl font-bold text-gray-800">Property Management</a>
             <nav class="space-x-4 flex items-center">
                 @guest
-                    <a href="{{ route('login') }}" class="text-gray-600 hover:text-gray-800">Login</a>
-                    <a href="{{ route('register') }}" class="text-gray-600 hover:text-gray-800">Sign Up</a>
+                    <a href="" class="text-gray-600 hover:text-gray-800">Login</a>
+                    <a href="" class="text-gray-600 hover:text-gray-800">Sign Up</a>
                 @else
-                    <a href="{{ route('host.dashboard') }}" class="text-gray-600 hover:text-gray-800">Dashboard</a>
-                    <form method="POST" action="{{ route('logout') }}" class="inline">
+                    <a href="" class="text-gray-600 hover:text-gray-800">Dashboard</a>
+                    <form method="POST" action="" class="inline">
                         @csrf
                         <button type="submit" class="text-gray-600 hover:text-gray-800">Logout</button>
                     </form>
@@ -50,7 +50,7 @@
     <!-- Scripts -->
     <!-- Google Maps API (Check if key is present) -->
     <script>
-        var googleMapsApiKey = '{{ env("GOOGLE_MAPS_API_KEY") }}';
+        var googleMapsApiKey = "{{ env('GOOGLE_MAPS_API_KEY') }}";
         if (googleMapsApiKey) {
             // Load the Google Maps API with the provided key
             var script = document.createElement('script');

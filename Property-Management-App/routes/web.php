@@ -32,7 +32,14 @@ Route::get('/', function () {
 Route::get('/ListProperty',function(){
     return view('propertylisting');
     });
+
+
 Route::get('/ListProperty',[PropertyController::class, 'listamenities']);
+
+Route::post('/insertproperty',[PropertyController::class, 'insertproperty'])->name('insert.property');
+Route::post('/upload-image', [PropertyController::class, 'uploadImage']);
+Route::post('/delete-image', [PropertyController::class, 'deleteImage']);
+
 
 // Test email route
 Route::get('/test-email/{status}/{bookingId}', function ($status, $bookingId) {
