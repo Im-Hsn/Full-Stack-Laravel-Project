@@ -1,58 +1,53 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Property Listing Form</title>
-    <script src="https://maps.googleapis.com/maps/api/js?key={{}}&libraries=places" async defer></script>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        let map;
-        let marker;
-        let latitude = 0;
-        let longitude = 0;
+@extends('layouts.app')
 
-        function initMap() {
-            const center = { lat: 33.8688, lng: 35.4955 };
-            
-            map = new google.maps.Map(document.getElementById("map"), {
-                center: center,
-                zoom: 12,
-            });
+@section('title', 'Property Listing Form')
 
-            marker = new google.maps.Marker({
-                position: center,
-                map: map,
-                draggable: true,
-            });
+@push('scripts')
+<script>
+    let map, marker, latitude = 0, longitude = 0;
 
-            google.maps.event.addListener(marker, "dragend", function(event) {
-                latitude = event.latLng.lat();
-                longitude = event.latLng.lng();
+    function initMap() {
+        const center = { lat: 33.8688, lng: 35.4955 };
+
+        map = new google.maps.Map(document.getElementById("map"), {
+            center: center,
+            zoom: 12,
+        });
+
+        marker = new google.maps.Marker({
+            position: center,
+            map: map,
+            draggable: true,
+        });
+
+        google.maps.event.addListener(marker, "dragend", function(event) {
+            latitude = event.latLng.lat();
+            longitude = event.latLng.lng();
+            document.getElementById("latitude").value = latitude;
+            document.getElementById("longitude").value = longitude;
+        });
+
+        const input = document.getElementById("location");
+        const autocomplete = new google.maps.places.Autocomplete(input);
+
+        autocomplete.addListener("place_changed", function () {
+            const place = autocomplete.getPlace();
+            if (place.geometry) {
+                latitude = place.geometry.location.lat();
+                longitude = place.geometry.location.lng();
+                marker.setPosition(place.geometry.location);
+                map.setCenter(place.geometry.location);
                 document.getElementById("latitude").value = latitude;
                 document.getElementById("longitude").value = longitude;
-            });
+            }
+        });
+    }
 
-            const input = document.getElementById("location");
-            const autocomplete = new google.maps.places.Autocomplete(input);
+    window.onload = initMap;
+</script>
+@endpush
 
-            autocomplete.addListener("place_changed", function() {
-                const place = autocomplete.getPlace();
-                if (place.geometry) {
-                    latitude = place.geometry.location.lat();
-                    longitude = place.geometry.location.lng();
-                    marker.setPosition(place.geometry.location);
-                    map.setCenter(place.geometry.location);
-                    document.getElementById("latitude").value = latitude;
-                    document.getElementById("longitude").value = longitude;
-                }
-            });
-        }
-
-        window.onload = initMap;
-    </script>
-</head>
-<body class="bg-gray-50 font-sans">
+@section('content')
     <div class="max-w-7xl mx-auto py-12 px-6">
         <div class="bg-white p-10 rounded-xl shadow-lg border border-gray-200 space-y-8">
             <h2 class="text-3xl font-semibold text-gray-800 mb-6">Property Listing</h2>
@@ -175,6 +170,7 @@
 
                 </div>
 
+@push('scripts')
                 <script>
 const imagePreviewContainer = document.getElementById('image-preview-container');
 const imageUploadBtn = document.getElementById('image-upload-btn');
@@ -308,8 +304,9 @@ function showAlert(message) {
     }, 3300);
 }
 
-
 </script>
+@endpush
+
 
 
                 <div class="mt-8 text-left">
@@ -318,6 +315,5 @@ function showAlert(message) {
             </form>
         </div>
     </div>
-</body>
-</html>
+@endsection
 
