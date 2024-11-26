@@ -22,30 +22,8 @@
             @endif
 
             <div class="mb-5">
-                <label for="email" class="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
-                <input type="email" name="email" id="email" value="{{ old('email') }}" required placeholder="Enter your email"
-                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring focus:ring-blue-500 focus:outline-none">
+                <a href="{{ route('auth.google') }}" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg focus:ring focus:ring-red-500 text-center block">Continue with Google</a>
             </div>
-
-            <div class="mb-6">
-                <label for="password" class="block text-sm font-medium text-gray-700 mb-2">Password</label>
-                <input type="password" name="password" id="password" required placeholder="Enter your password"
-                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring focus:ring-blue-500 focus:outline-none">
-            </div>
-
-            <div class="flex items-center justify-between mb-4">
-                <div>
-                    <label class="inline-flex items-center">
-                        <input type="checkbox" name="remember" class="form-checkbox h-4 w-4 text-blue-600">
-                        <span class="ml-2 text-sm text-gray-600">Remember me</span>
-                    </label>
-                </div>
-                <a href="#" class="text-sm text-blue-600 hover:underline">Forgot Password?</a>
-            </div>
-
-            <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg focus:ring focus:ring-blue-500">
-                Log In
-            </button>
         </form>
     </div>
 </div>

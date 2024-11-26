@@ -12,7 +12,7 @@ class CreateUsersTable extends Migration
             $table->id();
             $table->string('name');
             $table->string('email')->unique();
-            $table->string('password');
+            $table->string('google_id');
             $table->enum('role', ['guest', 'host']);
             $table->string('profile_image')->nullable();
             $table->string('identity_image')->nullable();

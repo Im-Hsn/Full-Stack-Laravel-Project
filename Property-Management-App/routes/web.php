@@ -24,6 +24,9 @@ use App\Models\Booking;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\BookingStatusMail;
 use App\Http\Controllers\PropertyController;
+use App\Http\Controllers\Auth\GoogleController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\Auth\LoginController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -33,6 +36,19 @@ Route::get('/ListProperty',function(){
     return view('propertylisting');
     });
 
+// Google OAuth routes
+Route::get('auth/google', [GoogleController::class, 'redirectToGoogle'])->name('auth.google');
+Route::get('auth/google/callback', [GoogleController::class, 'handleGoogleCallback']);
+Route::get('information', [GoogleController::class, 'showInformationForm'])->name('information');
+Route::post('information', [GoogleController::class, 'saveInformation']);
+
+Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard')->middleware('auth');
+Route::get('login', [LoginController::class, 'showLoginForm'])->name('login');
+
+Route::post('/logout', function () {
+    Auth::logout();
+    return redirect('/');
+})->name('logout');
 
 Route::get('/ListProperty',[PropertyController::class, 'listamenities']);
 

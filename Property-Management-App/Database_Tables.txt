@@ -2,7 +2,7 @@ Table Users {
     id INT [primary key]
     name VARCHAR(255)
     email VARCHAR(255) [unique]
-    password VARCHAR(255)
+    google_id VARCHAR(255)
     role ENUM('guest', 'host')
     profile_image VARCHAR(255)
     identity_image VARCHAR(255)
