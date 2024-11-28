@@ -75,6 +75,10 @@ class GoogleController extends Controller
     {
         $user = Auth::user();
 
+        if (!$user) {
+            return redirect('/login')->with('error', 'Session expired. Please log in again.');
+        }
+
         // Handle image uploads
         if ($request->hasFile('profile_image')) {
             $profileImagePath = $request->file('profile_image')->storeAs('Assets', $request->file('profile_image')->getClientOriginalName());
@@ -99,6 +103,6 @@ class GoogleController extends Controller
 
     private function needsAdditionalInfo(User $user)
     {
-        return is_null($user->role) || ($user->role === 'host' && !$user->profile_image);
+        return is_null($user->role);
     }
 }

@@ -5,20 +5,22 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Amenity extends Model
+class Notification extends Model
 {
     use HasFactory;
 
     // The table associated with the model
-    protected $table = 'amenities';
+    protected $table = 'notifications';
 
     // The attributes that are mass assignable
     protected $fillable = [
-        'amenity',
+        'user_id',
+        'content',
+        'read',
     ];
 
-    // Define the relationship between Amenity and Property through PropertyAmenity
-    public function properties() {
-        return $this->belongsToMany(Property::class, 'property_amenities');
+    // Define the relationship between Notification and User
+    public function user() {
+        return $this->belongsTo(User::class);
     }
 }

@@ -39,8 +39,10 @@ Route::get('/ListProperty',function(){
 // Google OAuth routes
 Route::get('auth/google', [GoogleController::class, 'redirectToGoogle'])->name('auth.google');
 Route::get('auth/google/callback', [GoogleController::class, 'handleGoogleCallback']);
-Route::get('information', [GoogleController::class, 'showInformationForm'])->name('information');
-Route::post('information', [GoogleController::class, 'saveInformation']);
+Route::middleware(['web'])->group(function () {
+    Route::get('information', [GoogleController::class, 'showInformationForm'])->name('information')->middleware('auth');
+    Route::post('information', [GoogleController::class, 'saveInformation']);
+});
 
 Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard')->middleware('auth');
 Route::get('login', [LoginController::class, 'showLoginForm'])->name('login');
