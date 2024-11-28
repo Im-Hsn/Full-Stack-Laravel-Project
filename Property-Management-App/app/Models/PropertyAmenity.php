@@ -11,7 +11,7 @@ class PropertyAmenity extends Model
 
     // The table associated with the model
     protected $table = 'property_amenities';
-
+    public $timestamps = false;
     // The attributes that are mass assignable
     protected $fillable = [
         'property_id',

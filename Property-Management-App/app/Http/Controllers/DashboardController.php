@@ -20,6 +20,6 @@ class DashboardController extends Controller
         $notifications = Notification::where('user_id', $user->id)->get();
         $messages = Message::where('receiver_id', $user->id)->get();
 
-        return view('dashboard.index', compact('properties', 'notifications', 'messages'));
+        return view('booking-dashboard', compact('properties', 'notifications', 'messages'));
     }
 }

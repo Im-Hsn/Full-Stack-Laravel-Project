@@ -8,20 +8,21 @@ use App\Models\PropertyAmenity;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
-
-
+use App\Models\Notification;
+use Illuminate\Support\Facades\Auth;
 class PropertyController extends Controller
 {
+    
     public function listamenities(){
 $amenities= Amenity::all();
 return view('propertylisting',compact('amenities'));
     }
-
+    
     public function insertproperty(Request $request){
         $property= new Property();
         $amenities= $request->amenities;
-        
-$property->user_id=1;
+        $user = Auth::user();
+$property->user_id=$user->id;
 $property->title= $request->title;
 $property->description=$request->description;
 $property->images_path= $request->imagearray;

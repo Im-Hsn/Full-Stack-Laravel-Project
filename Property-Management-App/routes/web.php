@@ -19,6 +19,8 @@
 //     return view('email-test', compact('status', 'bookingId'));
 // });
 
+
+
 use Illuminate\Support\Facades\Route;
 use App\Models\Booking;
 use Illuminate\Support\Facades\Mail;
@@ -27,15 +29,17 @@ use App\Http\Controllers\PropertyController;
 use App\Http\Controllers\Auth\GoogleController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\NotificationController;
+
 
 Route::get('/', function () {
     return view('welcome');
 });
-
+ 
 Route::get('/ListProperty',function(){
     return view('propertylisting');
     });
-
+ 
 // Google OAuth routes
 Route::get('auth/google', [GoogleController::class, 'redirectToGoogle'])->name('auth.google');
 Route::get('auth/google/callback', [GoogleController::class, 'handleGoogleCallback']);
@@ -43,22 +47,22 @@ Route::middleware(['web'])->group(function () {
     Route::get('information', [GoogleController::class, 'showInformationForm'])->name('information')->middleware('auth');
     Route::post('information', [GoogleController::class, 'saveInformation']);
 });
-
+ 
 Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard')->middleware('auth');
 Route::get('login', [LoginController::class, 'showLoginForm'])->name('login');
-
+ 
 Route::post('/logout', function () {
     Auth::logout();
     return redirect('/');
 })->name('logout');
-
+ 
 Route::get('/ListProperty',[PropertyController::class, 'listamenities']);
-
+ 
 Route::post('/insertproperty',[PropertyController::class, 'insertproperty'])->name('insert.property');
 Route::post('/upload-image', [PropertyController::class, 'uploadImage']);
 Route::post('/delete-image', [PropertyController::class, 'deleteImage']);
-
-
+ 
+ 
 // Test email route
 Route::get('/test-email/{status}/{bookingId}', function ($status, $bookingId) {
     Mail::to('host@example.com')->send(new BookingStatusMail($status, $bookingId));
@@ -102,3 +106,13 @@ Route::get('/booking/cancel/{bookingId}', function ($bookingId) {
 
     return "Booking #{$bookingId} has been cancelled.";
 });
+
+Route::get('/notifications', [NotificationController::class, 'showNotifications'])
+    ->name('notifications.index');
+
+Route::post('/notifications/mark-as-read', [NotificationController::class, 'markNotificationAsRead'])->name('notifications.read');
+Route::get('/booking-dashboard', function () {
+    return view('booking-dashboard');
+})->name('booking.dashboard');
+
+Route::get('/notifications/unread', [NotificationController::class, 'fetchUnreadNotifications']);
