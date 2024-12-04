@@ -30,7 +30,7 @@ use App\Http\Controllers\Auth\GoogleController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\NotificationController;
-
+use App\Http\Controllers\BookingController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -116,3 +116,14 @@ Route::get('/booking-dashboard', function () {
 })->name('booking.dashboard');
 
 Route::get('/notifications/unread', [NotificationController::class, 'fetchUnreadNotifications']);
+Route::get('/past-bookings', [BookingController::class, 'pastBookings'])->name('bookings.past');
+
+Route::get('/current-bookings', [BookingController::class, 'currentBookings'])->name('current.bookings');
+Route::post('/cancel-booking/{id}', [BookingController::class, 'cancelBooking'])->name('cancel.booking');
+
+// Route for confirming and canceling upcoming bookings
+Route::get('/upcoming-bookings', [BookingController::class, 'upcomingBookings'])->name('bookings.upcoming');
+Route::post('/booking/{id}/confirm', [BookingController::class, 'confirmBooking'])->name('confirm.booking');
+Route::post('/booking/{id}/cancel-upcoming', [BookingController::class, 'cancelUpcomingBooking'])->name('cancel.upcoming.booking');
+
+

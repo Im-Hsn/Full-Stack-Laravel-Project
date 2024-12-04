@@ -13,7 +13,7 @@
         </div>
         <h3 class="text-xl font-semibold text-gray-700 mb-2">Current Bookings</h3>
         <p class="text-gray-500 mb-4">View and manage your active bookings.</p>
-        <a href="#" class="text-blue-600 hover:underline font-medium">Go to Current Bookings</a>
+        <a href="{{ route('current.bookings') }}" class="text-blue-600 hover:underline font-medium">Go to Current Bookings</a>
     </div>
 
     <!-- Past Bookings -->
@@ -25,7 +25,7 @@
         </div>
         <h3 class="text-xl font-semibold text-gray-700 mb-2">Past Bookings</h3>
         <p class="text-gray-500 mb-4">Access history of completed bookings.</p>
-        <a href="#" class="text-green-600 hover:underline font-medium">Go to Past Bookings</a>
+        <a href="{{ route('bookings.past') }}" class="text-green-600 hover:underline font-medium">Go to Past Bookings</a>
     </div>
 
     <!-- Upcoming Bookings -->
@@ -37,7 +37,7 @@
         </div>
         <h3 class="text-xl font-semibold text-gray-700 mb-2">Upcoming Bookings</h3>
         <p class="text-gray-500 mb-4">Stay informed about future reservations.</p>
-        <a href="#" class="text-gray-600 hover:underline font-medium">Go to Upcoming Bookings</a>
+        <a href="{{ route('bookings.upcoming') }}" class="text-gray-600 hover:underline font-medium">Go to Upcoming Bookings</a>
     </div>
 
     <!-- My Properties -->

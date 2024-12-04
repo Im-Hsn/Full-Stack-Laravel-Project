@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Notification;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use App\Events\NewNotificationEvent;
@@ -10,8 +11,9 @@ class NotificationController extends Controller
 {
     public function showNotifications()
     {
+        $user = Auth::user();
         // Temporarily fetch notifications for user with id=1
-        $notifications = Notification::where('user_id', 1)  // Change this to `auth()->id()` later
+        $notifications = Notification::where('user_id', $user->id)  // Change this to `auth()->id()` later
             ->orderBy('created_at', 'desc')
             ->get();
 
@@ -33,8 +35,9 @@ class NotificationController extends Controller
 
     public function fetchUnreadNotifications()
 {
+    $user = Auth::user();
     // Fetch unread notifications for host with id=1
-    $notifications = Notification::where('user_id', 1) // Change to `auth()->id()` after implementing authentication
+    $notifications = Notification::where('user_id', $user->id) // Change to `auth()->id()` after implementing authentication
         ->where('read', false)
         ->orderBy('created_at', 'desc')
         ->get();

@@ -44,6 +44,8 @@
     }
 
     window.onload = initMap;
+
+    
 </script>
 @endpush
 
