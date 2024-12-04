@@ -69,6 +69,39 @@ Route::get('/test-email/{status}/{bookingId}', function ($status, $bookingId) {
     return "Email sent successfully for Booking #{$bookingId}";
 });
 
+Route::get('/message',function(){
+return view('message');
+});
+
+Route::get('/update/{id}',function($id){
+$controller= new PropertyController;
+$property= $controller->getpropertybyid($id);
+$amenities= $controller->listamenitiesforupdate();
+$propertyamenities= $controller->getpropertyaminity($id);
+$fileNames = $property->images_path;
+$fileArray = explode(',', $fileNames);
+$fileArray = array_map('trim', $fileArray);
+
+return view('UpdateProperty',compact('property','amenities','propertyamenities','fileArray'));
+});
+
+
+Route::put('/updating/{id}',[PropertyController::class, 'updateproperty'])->name('update.property');
+Route::get('/myproperties/{id}',function($id){
+$propertycontroller= new PropertyController();
+$userproperties=$propertycontroller->getuserproperties($id);
+
+return view('MyProperties',compact('userproperties'));
+});
+Route::delete('/delete/{userid}/{propertyid}',function($userid,$propertyid){
+    $controllers = new PropertyController();
+    try {
+        $controllers->deletepropertybyid($propertyid);
+        return redirect("/myproperties/{$userid}")->with('success', 'Property deleted successfully.');
+    } catch (\Exception $e) {
+        return redirect("/myproperties/{$userid}")->with('error', 'Failed to delete property. Please try again.');
+    }
+});
 // // Booking confirmation route
 // Route::get('/booking/confirm/{bookingId}', function ($bookingId) {
 //     $booking = Booking::findOrFail($bookingId);

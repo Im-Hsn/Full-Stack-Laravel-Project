@@ -105,6 +105,8 @@
     </script>
     <!-- Tailwind CSS (via CDN) -->
     <script src="https://cdn.tailwindcss.com"></script>
+
+
     <!-- Additional scripts -->
     @stack('scripts')
 </body>

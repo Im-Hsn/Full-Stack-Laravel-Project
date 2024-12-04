@@ -39,7 +39,10 @@
         <p class="text-gray-500 mb-4">Stay informed about future reservations.</p>
         <a href="{{ route('bookings.upcoming') }}" class="text-gray-600 hover:underline font-medium">Go to Upcoming Bookings</a>
     </div>
-
+@php
+$user = Auth::user();
+$userid=$user->id;
+@endphp
     <!-- My Properties -->
     <div class="bg-white rounded-lg shadow-md p-6 flex flex-col items-center justify-center text-center">
         <div class="bg-yellow-100 text-yellow-600 p-3 rounded-full mb-4">
@@ -50,7 +53,7 @@
         </div>
         <h3 class="text-xl font-semibold text-gray-700 mb-2">My Properties</h3>
         <p class="text-gray-500 mb-4">Manage properties listed for booking.</p>
-        <a href="#" class="text-yellow-600 hover:underline font-medium">Go to My Properties</a>
+        <a href="/myproperties/{{$userid}}" class="text-yellow-600 hover:underline font-medium">Go to My Properties</a>
     </div>
 </div>
 @endsection

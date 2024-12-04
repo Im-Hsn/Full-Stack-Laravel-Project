@@ -10,6 +10,11 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
 use App\Models\Notification;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
+
+
+
 class PropertyController extends Controller
 {
     
@@ -17,7 +22,20 @@ class PropertyController extends Controller
 $amenities= Amenity::all();
 return view('propertylisting',compact('amenities'));
     }
+
+    public function listamenitiesforupdate(){
+        $amenities= Amenity::all();
+        return $amenities;
+            }
     
+    public function getpropertyaminity($id){
+        $propertyAmenities = DB::table('property_amenities')
+        ->join('amenities', 'property_amenities.amenity_id', '=', 'amenities.id')
+        ->where('property_amenities.property_id', $id)
+        ->select('amenities.*') 
+        ->get();
+        return $propertyAmenities;
+    }
     public function insertproperty(Request $request){
         $property= new Property();
         $amenities= $request->amenities;
@@ -96,6 +114,77 @@ return "Property is inserted successfully!";
     }
 
     return response()->json(['success' => false, 'message' => 'File not found'], 404);
+}
+
+public function getpropertybyid($id){
+    $property = Property::where('id', $id)->first();
+    return $property;
+}
+
+public function updateProperty(Request $request, $id)
+{
+    try{
+    // Retrieve the existing property by ID
+    $property = Property::find($id);
+    $property->title = $request->title;
+    $property->description = $request->description;
+    $property->images_path = $request->imagearray;
+    $property->location = $request->location;
+    $property->latitude = $request->latitude;
+    $property->longitude = $request->longitude;
+
+    // Calculate price per night
+    $pricepernight = $request->price + $request->cleaning_fee + $request->security_deposit;
+    $property->price_per_night = $pricepernight;
+    $property->cleaning_fee = $request->cleaning_fee;
+    $property->security_deposit = $request->security_deposit;
+
+    // Update other details
+    $property->cancellation_policy = $request->cancellation_policy;
+    $property->start_date = $request->start_date;
+    $property->end_date = $request->end_date;
+
+    // Update availability
+    if ($request->has('is_active')) {
+        $property->is_available = 1;
+    } else {
+        $property->is_available = 0;
+    }
+
+    $property->save();
+
+    if ($request->has('amenities')) {
+        PropertyAmenity::where('property_id', $id)->delete();
+
+        $amenities = $request->amenities;
+        foreach ($amenities as $amenity) {
+            $amenity_object = Amenity::select('id')->where('amenity', '=', $amenity)->first();
+            if ($amenity_object) {
+                $amenity_id = $amenity_object->id;
+                $amenityInsert = new PropertyAmenity();
+                $amenityInsert->property_id = $id;
+                $amenityInsert->amenity_id = $amenity_id;
+                $amenityInsert->save();
+            }
+        }
+    }
+
+    return redirect("/myproperties/{$property->user_id}")->with('success', 'Property Updated successfully.');
+}
+catch (\Exception $e) {
+    return redirect("/myproperties/{$property->user_id}")->with('error', 'Failed to update property. Please try again.');
+}
+}
+
+public function getuserproperties($id){
+    $properties = Property::where('user_id', $id)->get();
+   
+    return $properties;
+}
+
+public function deletepropertybyid($id){
+    $property = Property::findOrFail($id);
+    $property->delete();
 }
 
 
