@@ -20,7 +20,7 @@ class User extends Authenticatable
         'google_id',     // Google unique ID
         'role',          // Role: 'guest' or 'host'
         'profile_image', // Profile image URL or path
-        'identity_image',// Identity image URL or path
+        'is_verified',   // id verification boolean
         'phone_number',  // User phone number
         'address',       // User address
     ];

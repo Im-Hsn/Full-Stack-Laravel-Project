@@ -5,7 +5,7 @@ Table Users {
     google_id VARCHAR(255)
     role ENUM('guest', 'host')
     profile_image VARCHAR(255)
-    identity_image VARCHAR(255)
+    is_verified BOOLEAN
     phone_number VARCHAR(15)
     address TEXT
     created_at TIMESTAMP

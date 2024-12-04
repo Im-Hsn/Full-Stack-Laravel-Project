@@ -15,7 +15,7 @@ class CreateUsersTable extends Migration
             $table->string('google_id');
             $table->enum('role', ['guest', 'host'])->nullable();
             $table->string('profile_image')->nullable();
-            $table->string('identity_image')->nullable();
+            $table->boolean('is_verified')->nullable();
             $table->string('phone_number')->nullable();
             $table->text('address')->nullable();
             $table->timestamps();

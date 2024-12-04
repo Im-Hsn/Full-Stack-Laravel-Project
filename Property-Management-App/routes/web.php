@@ -31,6 +31,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\BookingController;
+use App\Http\Controllers\EarningsController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -55,6 +56,15 @@ Route::post('/logout', function () {
     Auth::logout();
     return redirect('/');
 })->name('logout');
+
+// Earnings Routes
+Route::middleware(['auth'])->group(function () {
+    Route::get('/earnings', [EarningsController::class, 'index'])
+        ->name('earnings.dashboard');
+    
+    Route::post('/earnings/update-payout-method', [EarningsController::class, 'updatePayoutMethod'])
+        ->name('earnings.update-payout-method');
+});
  
 Route::get('/ListProperty',[PropertyController::class, 'listamenities']);
  

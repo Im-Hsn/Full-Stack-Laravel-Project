@@ -7,6 +7,9 @@ use Illuminate\Http\Request;
 use Laravel\Socialite\Facades\Socialite;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log;
 
 class GoogleController extends Controller
 {
@@ -79,27 +82,80 @@ class GoogleController extends Controller
             return redirect('/login')->with('error', 'Session expired. Please log in again.');
         }
 
-        // Handle image uploads
-        if ($request->hasFile('profile_image')) {
-            $profileImagePath = $request->file('profile_image')->storeAs('Assets', $request->file('profile_image')->getClientOriginalName());
-            $user->profile_image = $profileImagePath;
+        try {
+            // Handle profile image upload
+            if ($request->hasFile('profile_image')) {
+                $profileImagePath = $request->file('profile_image')->storeAs(
+                    'Assets',
+                    $request->file('profile_image')->getClientOriginalName()
+                );
+                $user->profile_image = $profileImagePath;
+            }
+
+            // Initialize verification status
+            $verificationMessage = null;
+
+            // Handle identity image upload
+            if ($request->hasFile('identity_image')) {
+                $identityImage = $request->file('identity_image');
+                $tempPath = $identityImage->store('temp');
+
+                if (!Storage::exists($tempPath)) {
+                    return redirect()->back()->with('error', 'Failed to upload identity image.');
+                }
+
+                // Use OCR API to extract text from the image
+                $response = Http::attach(
+                    'file',
+                    Storage::get($tempPath),
+                    $identityImage->getClientOriginalName()
+                )->post('https://api.ocr.space/parse/image', [
+                    'apikey' => env('OCR_API_KEY'), // Ensure your API key is set in the `.env` file
+                    'language' => 'eng',
+                ]);
+
+                // Parse OCR response
+                $ocrData = $response->json();
+                $extractedName = $ocrData['ParsedResults'][0]['ParsedText'] ?? '';
+
+                // Verify extracted name with the user's name
+                if (str_contains(strtolower($extractedName), strtolower($user->name))) {
+                    $user->is_verified = true;
+                    Log::info('User verified successfully.');
+                } else {
+                    $user->is_verified = false;
+                    $verificationMessage = 'Your ID verification failed. Please try again or contact support.';
+                    Log::warning('User verification failed.');
+                }
+
+                // Delete the temporary file
+                Storage::delete($tempPath);
+            }
+
+            // Update user information
+            $user->phone_number = $request->phone_number;
+            $user->address = $request->address;
+            $user->role = $request->role;
+
+            $user->save();
+
+            // Flash messages
+            $messages = [
+                'success' => 'Information updated successfully.',
+            ];
+
+            if ($verificationMessage) {
+                $messages['warning'] = $verificationMessage;
+            } elseif (!$user->is_verified) {
+                $messages['warning'] = 'Your ID verification is pending.';
+            }
+
+            return redirect('/dashboard')->with($messages);
+        } catch (\Exception $e) {
+            Log::error('Error saving user information:', ['message' => $e->getMessage()]);
+            return redirect()->back()->with('error', 'An error occurred while saving information.');
         }
-
-        if ($request->hasFile('identity_image')) {
-            $identityImagePath = $request->file('identity_image')->storeAs('Assets', $request->file('identity_image')->getClientOriginalName());
-            $user->identity_image = $identityImagePath;
-        }
-
-        // Update user information
-        $user->phone_number = $request->phone_number;
-        $user->address = $request->address;
-        $user->role = $request->role;
-
-        $user->save();
-
-        return redirect('/dashboard');
     }
-
 
     private function needsAdditionalInfo(User $user)
     {

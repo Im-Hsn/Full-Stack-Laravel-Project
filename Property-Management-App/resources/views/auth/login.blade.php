@@ -3,9 +3,9 @@
 @section('title', 'Login')
 
 @section('content')
-<div class="flex justify-center items-center min-h-screen bg-gradient-to-r from-blue-100 via-white to-blue-100 relative overflow-hidden">
+<div class="flex justify-center items-center min-h-screen bg-gradient-to-r from-blue-200 via-gray-100 to-blue-200 animate-gradient-shift relative overflow-hidden rounded-3xl">
     <!-- Background Icons Layer -->
-    <div class="absolute inset-0 overflow-hidden pointer-events-none">
+    <div class="absolute inset-0 overflow-hidden pointer-events-none rounded-3xl">
         <!-- Floating Property Management Icons -->
         <div class="absolute animate-icon-float-1 top-20 left-10 opacity-60">
             <svg xmlns="http://www.w3.org/2000/svg" class="w-24 h-24 text-cyan-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -33,7 +33,7 @@
     </div>
 
    <!-- Login Container -->
-   <div class="w-full max-w-md p-10 bg-white shadow-2xl rounded-2xl transform transition-all duration-500 relative z-10 border border-gray-100">
+   <div class="w-full max-w-md p-10 bg-white shadow-2xl rounded-3xl transform transition-all duration-500 relative z-10 border border-gray-100">
     <div class="text-center mb-10">
         <h2 class="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600 mb-4">Welcome Back</h2>
         <p class="text-gray-600 text-lg">Sign in to continue to your dashboard</p>
@@ -74,16 +74,13 @@
     /* Floating Icon Animations */
     @keyframes iconFloat {
         0%, 100% { transform: translateY(0) rotate(0deg); }
-        50% { transform: translateY(-20px) rotate(5deg); }
+        50% { transform: translateY(-30px) rotate(10deg); }
     }
 
     .animate-icon-float-1 { animation: iconFloat 4s ease-in-out infinite; }
     .animate-icon-float-2 { animation: iconFloat 3.5s ease-in-out infinite 0.5s; }
     .animate-icon-float-3 { animation: iconFloat 4.5s ease-in-out infinite 0.2s; }
     .animate-icon-float-4 { animation: iconFloat 4s ease-in-out infinite 0.7s; }
-    .animate-icon-float-5 { animation: iconFloat 3.5s ease-in-out infinite 1s; }
-    .animate-icon-float-6 { animation: iconFloat 4s ease-in-out infinite 1.2s; }
-    .animate-icon-float-7 { animation: iconFloat 3.5s ease-in-out infinite 1.5s; }
 
     /* Gradient Background Animation */
     @keyframes gradientShift {
@@ -94,7 +91,7 @@
 
     .animate-gradient-shift {
         background-size: 200% 200%;
-        animation: gradientShift 10s ease infinite;
+        animation: gradientShift 8s ease infinite;
     } 
 </style>
 @endsection
