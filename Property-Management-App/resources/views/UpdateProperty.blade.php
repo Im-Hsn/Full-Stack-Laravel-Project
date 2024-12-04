@@ -173,9 +173,8 @@
     const imagePreviewContainerMap = document.getElementById('image-preview-container-map');
     let imageCounter = 0;
     const uploadedImages = [];
-    const fileArray = @json($fileArray); // Pass the image array from the backend
+    const fileArray = @json($fileArray);
 
-    // Initial population of images from the backend
     fileArray.forEach(fileName => {
         const imagePath = "{{ asset('assets') }}/" + fileName;
 
@@ -185,7 +184,7 @@
         const img = document.createElement('img');
         img.src = imagePath;
         img.alt = fileName;
-        img.className = "w-full h-full object-cover rounded-xl"; // Styling for the image
+        img.className = "w-full h-full object-cover rounded-xl";
 
         const img1 = document.createElement('img');
         img1.src = imagePath;
@@ -203,12 +202,10 @@
             'relative', 'w-24', 'h-24', 'bg-gray-100', 'rounded-xl', 'overflow-hidden', 'shadow-md', 'border', 'border-gray-300', 'group'
         );
         imagePreview.appendChild(img);
-        imagePreviewContainer.appendChild(imagePreview); // Append the preview to the container
+        imagePreviewContainer.appendChild(imagePreview);
 
-        // Append map image to the map container
         imagePreviewContainerMap.appendChild(img1);
 
-        // Create the remove button
         const removeBtn = document.createElement('button');
         removeBtn.textContent = 'X';
         removeBtn.className = 'text-white text-3xl font-bold';
@@ -233,7 +230,7 @@
         document.getElementById('imagearray').innerHTML = uploadedImages.join(', ');
     });
 
-    let imageCount = fileArray.length; // Set initial image count to the number of existing images
+    let imageCount = fileArray.length;
     const MAX_IMAGES = 3;
 
     imageUploadBtn.addEventListener('click', function () {
@@ -255,7 +252,7 @@
         input.addEventListener('change', function () {
             const file = input.files[0];
             if (file) {
-                imageCount++;  // Increment the image count when a new image is selected
+                imageCount++; 
                 const fileName = file.name;
                 uploadedImages.push(fileName);
                 document.getElementById('imagearray').innerHTML = uploadedImages.join(', ');

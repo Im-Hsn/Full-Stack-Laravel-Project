@@ -34,7 +34,7 @@ use App\Http\Controllers\BookingController;
 use App\Http\Controllers\EarningsController;
 
 Route::get('/', function () {
-    return view('welcome');
+    return redirect('/login');
 });
  
 Route::get('/ListProperty',function(){
@@ -54,7 +54,7 @@ Route::get('login', [LoginController::class, 'showLoginForm'])->name('login');
  
 Route::post('/logout', function () {
     Auth::logout();
-    return redirect('/');
+    return redirect('/login');
 })->name('logout');
 
 // Earnings Routes
@@ -79,9 +79,9 @@ Route::get('/test-email/{status}/{bookingId}', function ($status, $bookingId) {
     return "Email sent successfully for Booking #{$bookingId}";
 });
 
-Route::get('/message',function(){
-return view('message');
-});
+Route::get('/message', function () {
+    return view('message');
+})->name('message');
 
 Route::get('/update/{id}',function($id){
 $controller= new PropertyController;

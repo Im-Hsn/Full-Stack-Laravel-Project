@@ -72,7 +72,7 @@
 <body class="bg-gray-50 flex flex-col min-h-screen text-gray-800 antialiased">
     <header class="bg-white shadow-sm transition-shadow duration-300 ease-in-out">
         <div class="container mx-auto px-4 py-3 flex justify-between items-center">
-            <a href="/" class="text-2xl font-bold text-gray-800 transform transition-transform hover:scale-105">
+            <a href="{{ route('booking.dashboard') }}" class="text-2xl font-bold text-gray-800 transform transition-transform hover:scale-105">
                 Property Management
             </a>
             
@@ -85,7 +85,19 @@
                     <div class="flex items-center space-x-6">
                         <!-- Booking Dashboard -->
                         <a href="{{ route('booking.dashboard') }}" class="nav-link text-gray-600 hover:text-gray-800 px-3 py-2 rounded-md transition-all duration-300 ease-in-out">
-                            Booking Dashboard
+                            Dashboard
+                        </a>
+
+                    <div class="flex items-center space-x-6">
+                        <!-- Chat -->
+                        <a href="{{ route('message') }}" class="nav-link text-gray-600 hover:text-gray-800 px-3 py-2 rounded-md transition-all duration-300 ease-in-out">
+                            Chat With Guests
+                        </a>
+
+                    <div class="flex items-center space-x-6">
+                        <!-- Chat -->
+                        <a href="{{ route('earnings.dashboard') }}" class="nav-link text-gray-600 hover:text-gray-800 px-3 py-2 rounded-md transition-all duration-300 ease-in-out">
+                            Track Earnings
                         </a>
                         
                         <!-- Notifications Icon -->

@@ -9,7 +9,7 @@ class BookingController extends Controller
     public function pastBookings()
 {
     // Authenticated host ID
-    $hostId = auth()->id(); // Replace with `auth()->id()` once authentication is implemented
+    $hostId = auth()->id();
 
     // Fetch past bookings for properties owned by the host
     $pastBookings = Booking::select('bookings.*', 'properties.title as property_title', 'users.name as guest_name', 'users.id as guest_id')
@@ -25,7 +25,7 @@ class BookingController extends Controller
 
 public function currentBookings()
 {
-    $hostId = auth()->user()->id; // Assuming host is logged in
+    $hostId = auth()->user()->id;
     
     // Modify the query for current bookings, similar to past bookings
     $currentBookings = Booking::select('bookings.*', 'properties.title as property_title', 'users.name as guest_name', 'users.email as guest_email')
