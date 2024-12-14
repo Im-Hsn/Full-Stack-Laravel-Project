@@ -99,6 +99,10 @@
                         <a href="{{ route('earnings.dashboard') }}" class="nav-link text-gray-600 hover:text-gray-800 px-3 py-2 rounded-md transition-all duration-300 ease-in-out">
                             Track Earnings
                         </a>
+
+                        <a href="{{ route('tickets.index') }}" class="nav-link text-gray-600 hover:text-gray-800 px-3 py-2 rounded-md transition-all duration-300 ease-in-out">
+                            Tickets
+                        </a>
                         
                         <!-- Notifications Icon -->
                         <a href="{{ route('notifications.index') }}" class="relative nav-link text-gray-600 hover:text-gray-800 px-3 py-2 rounded-md transition-all duration-300 ease-in-out group">
@@ -106,6 +110,8 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0a3.001 3.001 0 01-6 0m6 0H9" />
                             </svg>
                         </a>
+
+                        
 
                         <!-- Logout -->
                         <form method="POST" action="{{ route('logout') }}" class="inline">
