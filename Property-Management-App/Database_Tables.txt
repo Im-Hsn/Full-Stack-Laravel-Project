@@ -12,6 +12,20 @@ Table Users {
     updated_at TIMESTAMP
 }
 
+Table Tickets {
+    id INT [primary key]
+    user_id INT [ref: > Users.id]
+    subject VARCHAR(255)
+    service VARCHAR(255)
+    priority ENUM('Low', 'Medium', 'High')
+    message TEXT
+    image VARCHAR(255)
+    status ENUM('Pending', 'Resolved') [default: 'Pending']
+    date timestamp
+    created_at TIMESTAMP
+    updated_at TIMESTAMP
+}
+
 Table Properties {
     id INT [primary key]
     user_id INT [ref: > Users.id]

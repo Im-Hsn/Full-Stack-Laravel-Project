@@ -12,10 +12,227 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 
+// class EarningsController extends Controller
+// {
+//     /**
+//      * Display the host earnings dashboard
+//      */
+//     public function index()
+//     {
+//         $user = Auth::user();
+
+//         // Total Earnings
+//         $totalEarnings = $this->calculateTotalEarnings($user);
+        
+//         // Monthly Earnings
+//         $monthlyEarnings = $this->calculateMonthlyEarnings($user);
+        
+//         // Upcoming Payouts
+//         $upcomingPayouts = $this->calculateUpcomingPayouts($user);
+        
+//         // Next Payout Date
+//         $nextPayoutDate = $this->getNextPayoutDate($user);
+        
+//         // Property Performance
+//         $totalProperties = $this->getTotalProperties($user);
+//         $occupancyRate = $this->calculateOccupancyRate($user);
+        
+//         // Recent Transactions
+//         $recentTransactions = $this->getRecentTransactions($user);
+        
+//         // Earnings Chart Data
+//         $earningsChartData = $this->getEarningsChartData($user);
+
+//         return view('earnings', compact(
+//             'totalEarnings', 
+//             'monthlyEarnings', 
+//             'upcomingPayouts', 
+//             'nextPayoutDate',
+//             'totalProperties',
+//             'occupancyRate',
+//             'recentTransactions',
+//             'earningsChartData'
+//         ));
+//     }
+
+//     /**
+//      * Calculate total earnings for a host
+//      */
+//     protected function calculateTotalEarnings(User $user)
+//     {
+//         return Earnings::where('user_id', $user->id)->sum('amount');
+//     }
+
+//     /**
+//      * Calculate earnings for the current month
+//      */
+//     protected function calculateMonthlyEarnings(User $user)
+//     {
+//         return Earnings::where('user_id', $user->id)
+//             ->whereMonth('created_at', now()->month)
+//             ->whereYear('created_at', now()->year)
+//             ->sum('amount');
+//     }
+
+//     /**
+//      * Calculate upcoming payouts
+//      */
+//     protected function calculateUpcomingPayouts(User $user)
+//     {
+//         // Logic to calculate upcoming payouts based on pending bookings or payments
+//         return Booking::whereHas('property', function($query) use ($user) {
+//             $query->where('user_id', $user->id);
+//         })
+//         ->where('status', 'confirmed')
+//         ->whereDate('check_out_date', '<=', now()->addDays(30))
+//         ->sum('total_price');
+//     }
+
+//     /**
+//      * Get next payout date
+//      */
+//     protected function getNextPayoutDate(User $user)
+//     {
+//         // Assuming payouts are processed monthly
+//         return now()->addMonth()->startOfMonth()->format('d M Y');
+//     }
+
+//     /**
+//      * Get total number of host's properties
+//      */
+//     protected function getTotalProperties(User $user)
+//     {
+//         return Property::where('user_id', $user->id)->count();
+//     }
+
+//     /**
+//      * Calculate property occupancy rate
+//      */
+//     protected function calculateOccupancyRate(User $user)
+//     {
+//         $properties = Property::where('user_id', $user->id)->get();
+        
+//         if ($properties->isEmpty()) {
+//             return 0;
+//         }
+
+//         $totalBookings = Booking::whereIn('property_id', $properties->pluck('id'))
+//             ->where('status', 'confirmed')
+//             ->count();
+
+//         $totalPossibleBookings = $properties->count() * Carbon::now()->daysInMonth;
+
+//         return $totalBookings > 0 
+//             ? ($totalBookings / $totalPossibleBookings) * 100 
+//             : 0;
+//     }
+
+//     /**
+//      * Get recent transactions
+//      */
+//     protected function getRecentTransactions(User $user)
+//     {
+//         return Booking::whereHas('property', function($query) use ($user) {
+//             $query->where('user_id', $user->id);
+//         })
+//         ->with('property')
+//         ->latest()
+//         ->take(10)
+//         ->get()
+//         ->map(function($booking) {
+//             return (object)[
+//                 'date' => $booking->created_at->format('d M Y'),
+//                 'property_title' => $booking->property->title,
+//                 'amount' => $booking->total_price
+//             ];
+//         });
+//     }
+
+//     /**
+//      * Get earnings chart data for the last 6 months
+//      */
+//     protected function getEarningsChartData(User $user)
+//     {
+//         $earnings = Earnings::where('user_id', $user->id)
+//             ->selectRaw('MONTH(created_at) as month, SUM(amount) as total_earnings')
+//             ->whereRaw('created_at >= ?', [now()->subMonths(6)->startOfMonth()])
+//             ->groupBy('month')
+//             ->orderBy('month')
+//             ->get();
+
+//         $labels = [];
+//         $data = [];
+
+//         // Generate last 6 months labels and ensure data for all months
+//         for ($i = 5; $i >= 0; $i--) {
+//             $month = now()->subMonths($i)->format('M');
+//             $labels[] = $month;
+            
+//             $monthEarning = $earnings->firstWhere('month', now()->subMonths($i)->month);
+//             $data[] = $monthEarning ? $monthEarning->total_earnings : 0;
+//         }
+
+//         return [
+//             'labels' => $labels,
+//             'data' => $data
+//         ];
+//     }
+
+//     /**
+//      * Update payout method
+//      */
+//     public function updatePayoutMethod(Request $request)
+//     {
+//         $validatedData = $request->validate([
+//             'payout_method' => 'required|in:PayPal,Bank Transfer,Stripe',
+//             'payout_details' => 'required|string|max:255'
+//         ]);
+
+//         $user = Auth::user();
+//         $user->update([
+//             'payout_method' => $validatedData['payout_method'],
+//             'payout_details' => $validatedData['payout_details']
+//         ]);
+
+//         return redirect()->back()->with('success', 'Payout method updated successfully');
+//     }
+// }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 class EarningsController extends Controller
 {
     /**
-     * Display the host earnings dashboard
+     * Display the host earnings dashboard.
      */
     public function index()
     {
@@ -23,30 +240,30 @@ class EarningsController extends Controller
 
         // Total Earnings
         $totalEarnings = $this->calculateTotalEarnings($user);
-        
+
         // Monthly Earnings
         $monthlyEarnings = $this->calculateMonthlyEarnings($user);
-        
+
         // Upcoming Payouts
         $upcomingPayouts = $this->calculateUpcomingPayouts($user);
-        
+
         // Next Payout Date
-        $nextPayoutDate = $this->getNextPayoutDate($user);
-        
+        $nextPayoutDate = $this->getNextPayoutDate();
+
         // Property Performance
         $totalProperties = $this->getTotalProperties($user);
         $occupancyRate = $this->calculateOccupancyRate($user);
-        
+
         // Recent Transactions
         $recentTransactions = $this->getRecentTransactions($user);
-        
+
         // Earnings Chart Data
         $earningsChartData = $this->getEarningsChartData($user);
 
         return view('earnings', compact(
-            'totalEarnings', 
-            'monthlyEarnings', 
-            'upcomingPayouts', 
+            'totalEarnings',
+            'monthlyEarnings',
+            'upcomingPayouts',
             'nextPayoutDate',
             'totalProperties',
             'occupancyRate',
@@ -56,7 +273,7 @@ class EarningsController extends Controller
     }
 
     /**
-     * Calculate total earnings for a host
+     * Calculate total earnings for the host.
      */
     protected function calculateTotalEarnings(User $user)
     {
@@ -64,41 +281,38 @@ class EarningsController extends Controller
     }
 
     /**
-     * Calculate earnings for the current month
+     * Calculate earnings for the current month.
      */
     protected function calculateMonthlyEarnings(User $user)
     {
         return Earnings::where('user_id', $user->id)
-            ->whereMonth('created_at', now()->month)
-            ->whereYear('created_at', now()->year)
+            ->whereBetween('created_at', [now()->startOfMonth(), now()->endOfMonth()])
             ->sum('amount');
     }
 
     /**
-     * Calculate upcoming payouts
+     * Calculate upcoming payouts for confirmed bookings within the next 30 days.
      */
     protected function calculateUpcomingPayouts(User $user)
     {
-        // Logic to calculate upcoming payouts based on pending bookings or payments
-        return Booking::whereHas('property', function($query) use ($user) {
+        return Booking::whereHas('property', function ($query) use ($user) {
             $query->where('user_id', $user->id);
         })
-        ->where('status', 'confirmed')
-        ->whereDate('check_out_date', '<=', now()->addDays(30))
-        ->sum('total_price');
+            ->where('status', 'confirmed')
+            ->whereBetween('check_out_date', [now(), now()->addDays(30)])
+            ->sum('total_price');
     }
 
     /**
-     * Get next payout date
+     * Get the next payout date (first day of the next month).
      */
-    protected function getNextPayoutDate(User $user)
+    protected function getNextPayoutDate()
     {
-        // Assuming payouts are processed monthly
         return now()->addMonth()->startOfMonth()->format('d M Y');
     }
 
     /**
-     * Get total number of host's properties
+     * Get total properties owned by the host.
      */
     protected function getTotalProperties(User $user)
     {
@@ -106,94 +320,104 @@ class EarningsController extends Controller
     }
 
     /**
-     * Calculate property occupancy rate
+     * Calculate occupancy rate: (confirmed booking days / total property days).
      */
     protected function calculateOccupancyRate(User $user)
     {
-        $properties = Property::where('user_id', $user->id)->get();
-        
+        $properties = Property::where('user_id', $user->id)->pluck('id');
+
         if ($properties->isEmpty()) {
             return 0;
         }
 
-        $totalBookings = Booking::whereIn('property_id', $properties->pluck('id'))
+        $totalBookingDays = Booking::whereIn('property_id', $properties)
             ->where('status', 'confirmed')
-            ->count();
+            ->sumRaw('DATEDIFF(check_out_date, check_in_date)');
 
-        $totalPossibleBookings = $properties->count() * Carbon::now()->daysInMonth;
+        // Total available days in the month for all properties
+        $totalPropertyDays = now()->daysInMonth * $properties->count();
 
-        return $totalBookings > 0 
-            ? ($totalBookings / $totalPossibleBookings) * 100 
+        return $totalPropertyDays > 0
+            ? round(($totalBookingDays / $totalPropertyDays) * 100, 2)
             : 0;
     }
 
     /**
-     * Get recent transactions
+     * Get recent transactions (last 10 confirmed bookings).
      */
     protected function getRecentTransactions(User $user)
     {
-        return Booking::whereHas('property', function($query) use ($user) {
+        return Booking::whereHas('property', function ($query) use ($user) {
             $query->where('user_id', $user->id);
         })
-        ->with('property')
-        ->latest()
-        ->take(10)
-        ->get()
-        ->map(function($booking) {
-            return (object)[
-                'date' => $booking->created_at->format('d M Y'),
-                'property_title' => $booking->property->title,
-                'amount' => $booking->total_price
-            ];
-        });
+            ->with('property')
+            ->where('status', 'confirmed')
+            ->latest()
+            ->take(10)
+            ->get()
+            ->map(function ($booking) {
+                return (object)[
+                    'date' => $booking->created_at->format('d M Y'),
+                    'property_title' => $booking->property->title,
+                    'amount' => $booking->total_price,
+                ];
+            });
     }
 
     /**
-     * Get earnings chart data for the last 6 months
+     * Get earnings chart data for the last 6 months.
      */
     protected function getEarningsChartData(User $user)
     {
         $earnings = Earnings::where('user_id', $user->id)
-            ->selectRaw('MONTH(created_at) as month, SUM(amount) as total_earnings')
-            ->whereRaw('created_at >= ?', [now()->subMonths(6)->startOfMonth()])
-            ->groupBy('month')
-            ->orderBy('month')
+            ->selectRaw('MONTH(created_at) as month, YEAR(created_at) as year, SUM(amount) as total_earnings')
+            ->where('created_at', '>=', now()->subMonths(5)->startOfMonth())
+            ->groupBy('year', 'month')
+            ->orderByRaw('year, month')
             ->get();
 
         $labels = [];
         $data = [];
 
-        // Generate last 6 months labels and ensure data for all months
+        // Fill in missing months with 0 earnings
         for ($i = 5; $i >= 0; $i--) {
-            $month = now()->subMonths($i)->format('M');
-            $labels[] = $month;
-            
-            $monthEarning = $earnings->firstWhere('month', now()->subMonths($i)->month);
+            $currentMonth = now()->subMonths($i);
+            $monthLabel = $currentMonth->format('M');
+            $labels[] = $monthLabel;
+
+            $monthEarning = $earnings->firstWhere('month', $currentMonth->month);
             $data[] = $monthEarning ? $monthEarning->total_earnings : 0;
         }
 
         return [
             'labels' => $labels,
-            'data' => $data
+            'data' => $data,
         ];
     }
 
     /**
-     * Update payout method
+     * Update the payout method for the user.
      */
     public function updatePayoutMethod(Request $request)
     {
         $validatedData = $request->validate([
             'payout_method' => 'required|in:PayPal,Bank Transfer,Stripe',
-            'payout_details' => 'required|string|max:255'
+            'payout_details' => 'required|string|max:255',
         ]);
 
         $user = Auth::user();
         $user->update([
             'payout_method' => $validatedData['payout_method'],
-            'payout_details' => $validatedData['payout_details']
+            'payout_details' => $validatedData['payout_details'],
         ]);
 
-        return redirect()->back()->with('success', 'Payout method updated successfully');
+        return redirect()->back()->with('success', 'Payout method updated successfully.');
     }
 }
+
+
+
+
+
+
+
