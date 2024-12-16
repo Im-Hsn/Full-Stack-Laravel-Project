@@ -81,7 +81,15 @@
             <h2 class="text-2xl font-bold mb-6 flex items-center text-white">
                 <i class="fa-solid fa-comments mr-3"></i> Chats
             </h2>
-
+<!-- Search Bar -->
+<div class="mb-4">
+        <input 
+            type="text" 
+            id="guestSearch" 
+            placeholder="Search guests..." 
+            class="w-full px-4 py-2 rounded-lg border border-blue-200 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+        />
+    </div>
             <div id="guestList" class="space-y-3 overflow-y-auto h-[calc(100%-100px)] custom-scrollbar pr-2">
                 <!-- Dynamically loaded guest list -->
             </div>
@@ -165,136 +173,169 @@
     let chatListener = null;
 
     // Load Guest List
-    function loadGuestList() {
-        guestListDiv.innerHTML = '';
-        const hostChatsRef = db.ref(`chats/${hostId}`);
+   // Load Guest List
+   function loadGuestList() {
+    guestListDiv.innerHTML = '';
+    const hostChatsRef = db.ref(`chats/${hostId}`);
+    const searchInput = document.getElementById('guestSearch');
+    let allGuests = []; // Local storage for guest data
 
-        hostChatsRef.once('value', (snapshot) => {
-            const guests = snapshot.val();
-            
-            if (guests) {
-                Object.keys(guests).forEach((guestId) => {
-                    const guestDiv = document.createElement('div');
-                    guestDiv.className = 'guest-item p-3 rounded-lg cursor-pointer flex items-center transition-all group bg-white hover:bg-blue-50 shadow-sm';
+    hostChatsRef.once('value', (snapshot) => {
+        const guests = snapshot.val();
 
-                    // Unread count logic
-                    const unreadRef = db.ref(`chats/${hostId}/${guestId}/messages`);
-                    unreadRef.orderByChild('read').equalTo(false).on('value', (messageSnapshot) => {
-                        const unreadCount = messageSnapshot.numChildren();
-                        const unreadBadge = unreadCount > 0 
-                            ? `<span class="bg-red-500 text-white rounded-full px-2 py-1 text-xs ml-2">${unreadCount}</span>` 
-                            : '';
-                        
-                        guestDiv.innerHTML = `
-                            <img src="https://www.gravatar.com/avatar/${guestId}?d=mp&s=50" class="w-10 h-10 rounded-full mr-3 group-hover:scale-110 transition-transform">
-                            <div class="flex-1">
-                                <p class="font-semibold text-blue-800">${guestId}</p>
-                            </div>
-                            ${unreadBadge}
-                        `;
-                    });
+        if (guests) {
+            const guestEntries = Object.entries(guests);
 
-                    guestDiv.onclick = () => loadChat(guestId);
-                    guestListDiv.appendChild(guestDiv);
-                });
-            } else {
-                const noGuestsMessage = document.createElement('div');
-                noGuestsMessage.className = 'text-white text-center p-4';
-                noGuestsMessage.textContent = 'No active chats';
-                guestListDiv.appendChild(noGuestsMessage);
-            }
-        }, (error) => {
-            console.error('Firebase error:', error);
+            // Pre-fetch all guest names and store them locally
+            Promise.all(
+                guestEntries.map(([guestId]) =>
+                    db.ref(`chats/${hostId}/${guestId}/guest_info`).once('value').then((infoSnapshot) => ({
+                        guestId,
+                        name: infoSnapshot.val()?.name || `Guest ${guestId}`,
+                    }))
+                )
+            ).then((guestData) => {
+                allGuests = guestData; // Store all guest data locally
+                renderGuestList(allGuests); // Initial render
+            });
+
+            // Attach search functionality
+            searchInput.addEventListener('input', (e) => {
+                const query = e.target.value.toLowerCase();
+                const filteredGuests = allGuests.filter((guest) =>
+                    guest.name.toLowerCase().includes(query)
+                );
+                renderGuestList(filteredGuests);
+            });
+        } else {
+            const noGuestsMessage = document.createElement('div');
+            noGuestsMessage.className = 'text-white text-center p-4';
+            noGuestsMessage.textContent = 'No active chats';
+            guestListDiv.appendChild(noGuestsMessage);
+        }
+    }, (error) => {
+        console.error('Firebase error:', error);
+    });
+
+    function renderGuestList(guestData) {
+        guestListDiv.innerHTML = ''; // Clear previous content
+
+        guestData.forEach(({ guestId, name }) => {
+            const guestDiv = document.createElement('div');
+            guestDiv.className = 'guest-item p-3 rounded-lg cursor-pointer flex items-center transition-all group bg-white hover:bg-blue-50 shadow-sm';
+
+            // Unread count logic
+            const unreadRef = db.ref(`chats/${hostId}/${guestId}/messages`);
+            unreadRef.orderByChild('read').equalTo(false).on('value', (messageSnapshot) => {
+                const unreadCount = messageSnapshot.numChildren();
+                const unreadBadge = unreadCount > 0
+                    ? `<span class="bg-red-500 text-white rounded-full px-2 py-1 text-xs ml-2">${unreadCount}</span>`
+                    : '';
+
+                guestDiv.innerHTML = `
+                    <img src="https://www.gravatar.com/avatar/${guestId}?d=mp&s=50" class="w-10 h-10 rounded-full mr-3 group-hover:scale-110 transition-transform">
+                    <div class="flex-1">
+                        <p class="font-semibold text-blue-800">${name}</p>
+                    </div>
+                    ${unreadBadge}
+                `;
+            });
+
+            guestDiv.onclick = () => loadChat(guestId, name);
+            guestListDiv.appendChild(guestDiv);
         });
     }
+}
 
-    // Load Chat for a Specific Guest
-    function loadChat(guestId) {
-        // Remove previous listener if exists
-        if (chatListener && currentGuestId) {
-            const chatRefForGuest = db.ref(`chats/${hostId}/${currentGuestId}/messages`);
-            chatRefForGuest.off('child_added', chatListener);
+
+// Load Chat for a Specific Guest
+function loadChat(guestId, guestDisplayName) {
+    // Remove previous listener if exists
+    if (chatListener && currentGuestId) {
+        const chatRefForGuest = db.ref(`chats/${hostId}/${currentGuestId}/messages`);
+        chatRefForGuest.off('child_added', chatListener);
+    }
+
+    // Reset UI and set current guest
+    currentGuestId = guestId;
+    guestName.textContent = `Chat with ${guestDisplayName}`;
+    guestAvatar.src = `https://www.gravatar.com/avatar/${guestId}?d=mp&s=200`;
+    guestAvatar.classList.remove('hidden');
+    placeholderDiv.classList.add('hidden');
+    messageInputArea.classList.remove('hidden');
+    closeChatButton.classList.remove('hidden');
+
+    // Clear current messages
+    messagesDiv.innerHTML = '';
+    let lastDisplayedDate = null;
+    const addedMessages = new Set();
+
+    const chatRefForGuest = db.ref(`chats/${hostId}/${guestId}/messages`);
+
+    // Mark all messages as read
+    chatRefForGuest.once('value', (snapshot) => {
+        snapshot.forEach((childSnapshot) => {
+            childSnapshot.ref.update({ read: true });
+        });
+    });
+
+    // Listener for new messages
+    chatListener = (snapshot) => {
+        const message = snapshot.val();
+        const messageKey = snapshot.key;
+
+        if (addedMessages.has(messageKey)) return;
+        addedMessages.add(messageKey);
+
+        const messageDate = new Date(message.timestamp);
+        const formattedDate = messageDate.toLocaleDateString('en-GB', {
+            weekday: 'short',
+            day: 'numeric',
+            month: 'short'
+        });
+
+        // Add date separator if changed
+        if (formattedDate !== lastDisplayedDate) {
+            lastDisplayedDate = formattedDate;
+            const dateElement = document.createElement('div');
+            dateElement.className = 'text-center text-gray-500 font-bold mb-2';
+            dateElement.textContent = formattedDate;
+            messagesDiv.appendChild(dateElement);
         }
 
-        // Reset UI and set current guest
-        currentGuestId = guestId;
-        guestName.textContent = `Chat with ${guestId}`;
-        guestAvatar.src = `https://www.gravatar.com/avatar/${guestId}?d=mp&s=200`;
-        guestAvatar.classList.remove('hidden');
-        placeholderDiv.classList.add('hidden');
-        messageInputArea.classList.remove('hidden');
-        closeChatButton.classList.remove('hidden');
-
-        // Clear current messages
-        messagesDiv.innerHTML = '';
-        let lastDisplayedDate = null;
-        const addedMessages = new Set();
-
-        const chatRefForGuest = db.ref(`chats/${hostId}/${guestId}/messages`);
-
-        // Mark all messages as read
-        chatRefForGuest.once('value', (snapshot) => {
-            snapshot.forEach((childSnapshot) => {
-                childSnapshot.ref.update({ read: true });
-            });
-        });
-
-        // Listener for new messages
-        chatListener = (snapshot) => {
-            const message = snapshot.val();
-            const messageKey = snapshot.key;
-
-            if (addedMessages.has(messageKey)) return;
-            addedMessages.add(messageKey);
-
-            const messageDate = new Date(message.timestamp);
-            const formattedDate = messageDate.toLocaleDateString('en-GB', {
-                weekday: 'short',
-                day: 'numeric',
-                month: 'short'
-            });
-
-            // Add date separator if changed
-            if (formattedDate !== lastDisplayedDate) {
-                lastDisplayedDate = formattedDate;
-                const dateElement = document.createElement('div');
-                dateElement.className = 'text-center text-gray-500 font-bold mb-2';
-                dateElement.textContent = formattedDate;
-                messagesDiv.appendChild(dateElement);
-            }
-
-            // Create message element
-            const messageElement = document.createElement('div');
-            messageElement.className = `flex ${message.sender === hostId ? 'justify-end' : 'justify-start'} mb-2`;
-            
-            const contentElement = document.createElement('div');
-            contentElement.className = `p-3 rounded-xl max-w-xs ${
+        // Create message element
+        const messageElement = document.createElement('div');
+        messageElement.className = `flex ${message.sender === hostId ? 'justify-end' : 'justify-start'} mb-2`;
+        
+        const contentElement = document.createElement('div');
+        contentElement.className = `p-3 rounded-xl max-w-xs ${
+            message.sender === hostId 
+                ? 'bg-blue-500 text-white' 
+                : 'bg-gray-200 text-gray-800'
+        }`;
+        
+        contentElement.innerHTML = `
+            <p class="text-sm">${message.text}</p>
+            <span class="text-xs ${
                 message.sender === hostId 
-                    ? 'bg-blue-500 text-white' 
-                    : 'bg-gray-200 text-gray-800'
-            }`;
-            
-            contentElement.innerHTML = `
-                <p class="text-sm">${message.text}</p>
-                <span class="text-xs ${
-                    message.sender === hostId 
-                        ? 'text-blue-100' 
-                        : 'text-gray-500'
-                } block mt-1 text-right">
-                    ${messageDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                </span>
-            `;
+                    ? 'text-blue-100' 
+                    : 'text-gray-500'
+            } block mt-1 text-right">
+                ${messageDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+            </span>
+        `;
 
-            messageElement.appendChild(contentElement);
-            messagesDiv.appendChild(messageElement);
+        messageElement.appendChild(contentElement);
+        messagesDiv.appendChild(messageElement);
 
-            // Auto-scroll to bottom
-            messagesDiv.scrollTop = messagesDiv.scrollHeight;
-        };
+        // Auto-scroll to bottom
+        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    };
 
-        // Attach the listener
-        chatRefForGuest.orderByChild('timestamp').limitToLast(50).on('child_added', chatListener);
-    }
+    // Attach the listener
+    chatRefForGuest.orderByChild('timestamp').limitToLast(50).on('child_added', chatListener);
+}
+
 
     // Close Chat Functionality
     closeChatButton.addEventListener('click', () => {
@@ -331,7 +372,7 @@
                 sender: hostId,
                 text: messageText,
                 timestamp: firebase.database.ServerValue.TIMESTAMP,
-                read: false
+                
             };
 
             db.ref(`chats/${hostId}/${currentGuestId}/messages`).push(newMessage);

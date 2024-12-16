@@ -44,8 +44,6 @@
     }
 
     window.onload = initMap;
-
-    
 </script>
 @endpush
 
@@ -171,7 +169,7 @@
 const imagePreviewContainer = document.getElementById('image-preview-container');
 const imageUploadBtn = document.getElementById('image-upload-btn');
 const imagePreviewContainerMap = document.getElementById('image-preview-container-map');
-
+let imageCounter = 0;
 const uploadedImages = [];
 
 imageUploadBtn.addEventListener('click', function () {

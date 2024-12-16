@@ -32,60 +32,95 @@
         </div>
     </div>
 
-    <!-- Upcoming Bookings Container -->
-    <div class="w-full max-w-6xl px-6 py-10 bg-white shadow-2xl rounded-2xl transform transition-all duration-500 relative z-10 border border-gray-100">
-        <h2 class="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600 mb-6 text-center">Upcoming Bookings</h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div class="container mx-auto px-4 py-8">
+    <div class="max-w-4xl mx-auto bg-white dark:bg-neutral-800 rounded-2xl shadow-2xl">
+        <h2 class="text-4xl font-extrabold text-center py-6 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
+            Upcoming Bookings
+        </h2>
+
+        <div class="space-y-4 p-4">
             @forelse ($upcomingBookings as $booking)
-            <div class="bg-gradient-to-r from-blue-50 via-white to-purple-50 shadow-md rounded-lg p-6">
-                <h3 class="text-lg font-semibold text-gray-800">{{ $booking->property_title }}</h3>
-                <p class="text-sm text-gray-500">Check-in: {{ $booking->check_in_date }}</p>
-                <p class="text-sm text-gray-500">Check-out: {{ $booking->check_out_date }}</p>
-                <p class="text-sm text-gray-500">Total Price: ${{ $booking->total_price }}</p>
-
-                <div class="mt-4">
-                    <button class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 focus:outline-none" onclick="toggleDetails('booking-{{ $booking->id }}')">
-                        Booking Details
-                    </button>
-                    <div id="booking-{{ $booking->id }}" class="hidden mt-2 text-sm text-gray-700">
-                        <p>Status: {{ ucfirst($booking->status) }}</p>
-                        <p>Created at: {{ $booking->created_at }}</p>
+            <div class="group w-full border border-gray-200 dark:border-neutral-600 rounded-xl shadow-md hover:shadow-xl transition-all duration-300 ease-in-out overflow-hidden">
+                <div class="p-6 grid grid-cols-1 md:grid-cols-3 gap-4 items-center relative">
+                    <div class="col-span-2">
+                        <h3 class="text-2xl font-bold text-gray-800 dark:text-neutral-100 mb-4">
+                            {{ $booking->property_title }}
+                        </h3>
+                        
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 text-sm text-gray-600 dark:text-neutral-300">
+                            <div class="flex items-center space-x-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                </svg>
+                                <span>Check-in: {{ $booking->check_in_date }}</span>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                                </svg>
+                                <span>Check-out: {{ $booking->check_out_date }}</span>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-purple-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                                <span>Total: ${{ $booking->total_price }}</span>
+                            </div>
+                        </div>
                     </div>
 
-                    <button class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 focus:outline-none mt-2" onclick="toggleDetails('guest-{{ $booking->id }}')">
-                        Guest Details
-                    </button>
-                    <div id="guest-{{ $booking->id }}" class="hidden mt-2 text-sm text-gray-700">
-                        <p>Guest Name: {{ $booking->guest_name }}</p>
-                        <p>Guest Email: {{ $booking->guest_email }}</p>
+                    <div class="flex flex-col space-y-2">
+                        <div class="flex space-x-2">
+                            @if($booking->status == 'pending' || $booking->status == 'cancelled')
+                            <form action="{{ route('confirm.booking', $booking->id) }}" method="POST" class="w-1/2">
+                                @csrf
+                                <button type="submit" class="w-full px-4 py-2 bg-yellow-500 text-white rounded-md hover:bg-yellow-600 focus:ring-2 focus:ring-yellow-500 transition-colors">
+                                    Confirm
+                                </button>
+                            </form>
+                            @endif
+
+                            <form action="{{ route('cancel.upcoming.booking', $booking->id) }}" method="POST" class="w-1/2">
+                                @csrf
+                                <button type="submit" class="w-full px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 focus:ring-2 focus:ring-red-500 transition-colors">
+                                    Cancel
+                                </button>
+                            </form>
+                        </div>
                     </div>
 
-                    <div class="mt-4 flex justify-between">
-                        <!-- Confirm Booking Button -->
-                        @if($booking->status == 'pending') <!-- Ensure only pending bookings can be confirmed -->
-                        <form action="{{ route('confirm.booking', $booking->id) }}" method="POST" class="w-1/2 pr-2">
-                            @csrf
-                            <button type="submit" class="w-full px-4 py-2 bg-yellow-600 text-white rounded hover:bg-yellow-700">
-                                Confirm
-                            </button>
-                        </form>
-                        @endif
+                    <div class="absolute right-4 top-4 cursor-pointer group-hover:rotate-180 transition-transform duration-300">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-500 hover:text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </div>
 
-                        <!-- Cancel Booking Button -->
-                        <form action="{{ route('cancel.upcoming.booking', $booking->id) }}" method="POST" class="w-1/2 pl-2">
-                            @csrf
-                            <button type="submit" class="w-full px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700">
-                                Cancel
-                            </button>
-                        </form>
+                    <div class="w-full col-span-3 border-t border-gray-200 dark:border-neutral-600 mt-4 pt-4 hidden group-hover:block transition-all duration-300 ease-in-out">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="bg-gray-50 dark:bg-neutral-700 p-4 rounded-md">
+                                <h4 class="text-lg font-semibold text-indigo-600 dark:text-indigo-300 mb-2">Booking Details</h4>
+                                <div class="space-y-1 text-sm text-gray-700 dark:text-neutral-200">
+                                    <p><span class="font-medium">Status:</span> {{ ucfirst($booking->status) }}</p>
+                                    <p><span class="font-medium">Created:</span> {{ $booking->created_at }}</p>
+                                </div>
+                            </div>
+                            <div class="bg-gray-50 dark:bg-neutral-700 p-4 rounded-md">
+                                <h4 class="text-lg font-semibold text-green-600 dark:text-green-300 mb-2">Guest Details</h4>
+                                <div class="space-y-1 text-sm text-gray-700 dark:text-neutral-200">
+                                    <p><span class="font-medium">Name:</span> {{ $booking->guest_name }}</p>
+                                    <p><span class="font-medium">Email:</span> {{ $booking->guest_email }}</p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
             @empty
-            <p class="text-gray-500 text-center col-span-full">No upcoming bookings found.</p>
+            <p class="text-gray-500 dark:text-neutral-400 text-center">No upcoming bookings found.</p>
             @endforelse
         </div>
     </div>
+</div>
 </div>
 
 <script>
@@ -118,5 +153,20 @@
         background-size: 200% 200%;
         animation: gradientShift 8s ease infinite;
     } 
+    /* Modern Scrollbar */
+    * {
+        scrollbar-width: thin;
+        scrollbar-color: rgba(107, 114, 128, 0.3) transparent;
+    }
+    *::-webkit-scrollbar {
+        width: 6px;
+    }
+    *::-webkit-scrollbar-track {
+        background: transparent;
+    }
+    *::-webkit-scrollbar-thumb {
+        background-color: rgba(107, 114, 128, 0.3);
+        border-radius: 20px;
+    }
 </style>
 @endsection

@@ -71,7 +71,7 @@ $amintiyinsert->property_id=$propid;
 $amintiyinsert->amenity_id=$amenity_id;
 $amintiyinsert->save();
 }
-return "Property is inserted successfully!";
+return redirect("/myproperties/{$property->user_id}")->with('success', 'Property is inserted successfully!');
     }
 
     public function uploadImage(Request $request)
@@ -176,11 +176,30 @@ catch (\Exception $e) {
 }
 }
 
-public function getuserproperties($id){
-    $properties = Property::where('user_id', $id)->get();
-   
-    return $properties;
+public function getuserproperties(Request $request, $id)
+{
+    $query = Property::where('user_id', $id);
+
+    // Search functionality
+    if ($request->has('search') && !empty($request->input('search'))) {
+        $searchTerm = $request->input('search');
+        $query->where('title', 'like', "%{$searchTerm}%")
+              ->orWhere('description', 'like', "%{$searchTerm}%")
+              ->orWhere('location', 'like', "%{$searchTerm}%");
+    }
+
+    // Sort by price
+    if ($request->has('sort') && $request->input('sort') === 'price_asc') {
+        $query->orderBy('price_per_night', 'asc');
+    } elseif ($request->has('sort') && $request->input('sort') === 'price_desc') {
+        $query->orderBy('price_per_night', 'desc');
+    }
+
+    $properties = $query->get();
+
+    return view('myproperties', compact('properties'));
 }
+
 
 public function deletepropertybyid($id){
     $property = Property::findOrFail($id);

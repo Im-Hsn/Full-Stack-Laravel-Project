@@ -103,6 +103,10 @@
                         <a href="{{ route('tickets.index') }}" class="nav-link text-gray-600 hover:text-gray-800 px-3 py-2 rounded-md transition-all duration-300 ease-in-out">
                             Tickets
                         </a>
+
+                        <a href="/ListProperty" class="nav-link text-gray-600 hover:text-gray-800 px-3 py-2 rounded-md transition-all duration-300 ease-in-out">
+                            List Property
+                        </a>
                         
                         <!-- Notifications Icon -->
                         <a href="{{ route('notifications.index') }}" class="relative nav-link text-gray-600 hover:text-gray-800 px-3 py-2 rounded-md transition-all duration-300 ease-in-out group">

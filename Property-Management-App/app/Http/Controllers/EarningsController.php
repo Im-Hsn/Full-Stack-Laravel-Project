@@ -116,7 +116,7 @@ class EarningsController extends Controller
             return 0;
         }
 
-        $totalBookings = Bookings::whereIn('property_id', $properties->pluck('id'))
+        $totalBookings = Booking::whereIn('property_id', $properties->pluck('id'))
             ->where('status', 'confirmed')
             ->count();
 

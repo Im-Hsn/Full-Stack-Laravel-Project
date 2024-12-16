@@ -33,6 +33,8 @@ use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\EarningsController;
 use App\Http\Controllers\TicketController;
+use App\Http\Controllers\GuestController;
+use Illuminate\Http\Request;
 
 Route::get('/', function () {
     return redirect('/login');
@@ -62,7 +64,23 @@ Route::post('/logout', function () {
 Route::middleware(['auth'])->group(function () {
     Route::get('/earnings', [EarningsController::class, 'index'])
         ->name('earnings.dashboard');
-    
+
+        Route::get('/guest/properties', function () {
+        if (Auth::user()->role !== 'guest') {
+            abort(403, 'Unauthorized access');
+        }
+
+        return app(GuestController::class)->listProperties();
+    })->name('guest.properties');
+
+    Route::post('/guest/book', function (Request $request) {
+        if (Auth::user()->role !== 'guest') {
+            abort(403, 'Unauthorized access');
+        }
+
+        return app(GuestController::class)->bookProperty($request);
+    })->name('guest.book');
+
     Route::post('/earnings/update-payout-method', [EarningsController::class, 'updatePayoutMethod'])
         ->name('earnings.update-payout-method');
 });
@@ -98,12 +116,8 @@ return view('UpdateProperty',compact('property','amenities','propertyamenities',
 
 
 Route::put('/updating/{id}',[PropertyController::class, 'updateproperty'])->name('update.property');
-Route::get('/myproperties/{id}',function($id){
-$propertycontroller= new PropertyController();
-$userproperties=$propertycontroller->getuserproperties($id);
+Route::get('/myproperties/{id}', [PropertyController::class, 'getuserproperties'])->name('myproperties');
 
-return view('MyProperties',compact('userproperties'));
-});
 Route::delete('/delete/{userid}/{propertyid}',function($userid,$propertyid){
     $controllers = new PropertyController();
     try {

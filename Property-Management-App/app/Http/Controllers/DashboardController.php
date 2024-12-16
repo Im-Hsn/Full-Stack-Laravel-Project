@@ -13,7 +13,7 @@ class DashboardController extends Controller
     {
         $user = Auth::user();
         if ($user->role !== 'host') {
-            return redirect('/');
+            return redirect('/guest/properties');
         }
 
         $properties = Property::where('user_id', $user->id)->get();
