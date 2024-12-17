@@ -3,27 +3,75 @@
 @section('title', 'Booking Dashboard')
 
 @section('content')
-<div class="container mx-auto mt-6">
-    <!-- Display verification messages -->
-    @if (session('status'))
-        <div class="mb-6">
-            <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 rounded-lg" role="alert">
-                <p class="font-bold">Success</p>
-                <p>{{ session('status') }}</p>
+<div class="container mx-auto mt-6 relative">
+    <!-- Dashboard Tour Popup -->
+    @if(session('first_login', true))
+    <div id="dashboard-tour" class="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center">
+        <div class="bg-white rounded-lg shadow-xl p-6 max-w-md w-full relative">
+            <button 
+                onclick="closeTour()" 
+                class="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
+            >
+                &times;
+            </button>
+
+            <div id="tour-steps">
+                <div class="tour-step" data-step="0">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-4">Welcome to Your Booking Dashboard</h2>
+                    <p class="text-gray-600 mb-4">Let's take a quick tour of your dashboard features.</p>
+                </div>
+
+                <div class="tour-step hidden" data-step="1">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-4">Current Bookings</h2>
+                    <p class="text-gray-600 mb-4">View and manage all your active bookings in one convenient section.</p>
+                </div>
+
+                <div class="tour-step hidden" data-step="2">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-4">Past Bookings</h2>
+                    <p class="text-gray-600 mb-4">Access the complete history of your completed bookings.</p>
+                </div>
+
+                <div class="tour-step hidden" data-step="3">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-4">Upcoming Bookings</h2>
+                    <p class="text-gray-600 mb-4">Stay informed about all your future reservations and planned trips.</p>
+                </div>
+
+                <div class="tour-step hidden" data-step="4">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-4">My Properties</h2>
+                    <p class="text-gray-600 mb-4">Manage and view the properties you have listed for booking.</p>
+                </div>
+            </div>
+
+            <div class="flex justify-between items-center mt-6">
+                <button 
+                    id="prev-btn" 
+                    onclick="changeTourStep(-1)" 
+                    class="text-blue-600 hover:text-blue-800 hidden"
+                >
+                    Previous
+                </button>
+                <button 
+                    id="next-btn" 
+                    onclick="changeTourStep(1)" 
+                    class="text-white bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded"
+                >
+                    Next
+                </button>
+            </div>
+
+            <div class="flex justify-center mt-4">
+                @for($i = 0; $i < 5; $i++)
+                    <span 
+                        id="step-indicator-{{ $i }}" 
+                        class="h-2 w-2 rounded-full mx-1 {{ $i === 0 ? 'bg-blue-600' : 'bg-gray-300' }}"
+                    ></span>
+                @endfor
             </div>
         </div>
+    </div>
     @endif
 
-    @if (session('warning'))
-        <div class="mb-6">
-            <div class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 rounded-lg" role="alert">
-                <p class="font-bold">Warning</p>
-                <p>{{ session('warning') }}</p>
-            </div>
-        </div>
-    @endif
-
-    <!-- Booking Options -->
+    <!-- Rest of the dashboard remains the same as before -->
     <div class="grid grid-cols-2 gap-6 h-screen">
         <!-- Current Bookings -->
         <div class="bg-white rounded-lg shadow-md p-6 flex flex-col items-center justify-center text-center">
@@ -80,63 +128,45 @@
     </div>
 </div>
 
-<!-- Walkthrough Popup -->
-<div id="walkthrough-popup" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 hidden">
-    <div class="bg-white rounded-lg shadow-lg p-6 max-w-sm text-center relative">
-        <p id="walkthrough-text" class="text-gray-700 mb-4 font-medium"></p>
-        <div class="flex justify-between">
-            <button id="skip-walkthrough" class="text-red-500 font-semibold hover:underline">Skip</button>
-            <button id="next-walkthrough" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Next</button>
-        </div>
-    </div>
-</div>
-
+@push('scripts')
 <script>
-document.addEventListener("DOMContentLoaded", () => {
-    const steps = [
-        { selector: "a[href*='current.bookings']", text: "This link takes you to your Current Bookings where you can view and manage active reservations." },
-        { selector: "a[href*='bookings.past']", text: "Here, you can access the Past Bookings to review completed reservations." },
-        { selector: "a[href*='bookings.upcoming']", text: "This section helps you stay updated about your Upcoming Bookings." },
-        { selector: "a[href*='/myproperties']", text: "Manage your listed properties under My Properties." }
-    ];
-
     let currentStep = 0;
+    const totalSteps = 5;
 
-    const popup = document.getElementById("walkthrough-popup");
-    const walkthroughText = document.getElementById("walkthrough-text");
-    const nextButton = document.getElementById("next-walkthrough");
-    const skipButton = document.getElementById("skip-walkthrough");
+    function changeTourStep(direction) {
+        const steps = document.querySelectorAll('.tour-step');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
 
-    function showStep(stepIndex) {
-        if (stepIndex < steps.length) {
-            const step = steps[stepIndex];
-            walkthroughText.textContent = step.text;
+        // Hide current step
+        steps[currentStep].classList.add('hidden');
+        document.getElementById(`step-indicator-${currentStep}`).classList.remove('bg-blue-600');
+        document.getElementById(`step-indicator-${currentStep}`).classList.add('bg-gray-300');
 
-            document.querySelectorAll(steps.map(s => s.selector).join(",")).forEach(el => {
-                el.classList.remove("ring-4", "ring-blue-400");
-            });
-            const currentElement = document.querySelector(step.selector);
-            if (currentElement) {
-                currentElement.classList.add("ring-4", "ring-blue-400");
-                currentElement.scrollIntoView({ behavior: "smooth", block: "center" });
-            }
-        } else {
-            popup.classList.add("hidden");
-            document.querySelectorAll(steps.map(s => s.selector).join(",")).forEach(el => el.classList.remove("ring-4", "ring-blue-400"));
+        // Update step
+        currentStep += direction;
+
+        // Handle start/end of tour
+        if (currentStep < 0) currentStep = 0;
+        if (currentStep >= totalSteps) {
+            closeTour();
+            return;
         }
+
+        // Show new step
+        steps[currentStep].classList.remove('hidden');
+        document.getElementById(`step-indicator-${currentStep}`).classList.remove('bg-gray-300');
+        document.getElementById(`step-indicator-${currentStep}`).classList.add('bg-blue-600');
+
+        // Update button visibility
+        prevBtn.classList.toggle('hidden', currentStep === 0);
+        nextBtn.textContent = currentStep === totalSteps - 1 ? 'Finish' : 'Next';
     }
 
-    nextButton.addEventListener("click", () => {
-        currentStep++;
-        showStep(currentStep);
-    });
-
-    skipButton.addEventListener("click", () => {
-        popup.classList.add("hidden");
-    });
-
-    popup.classList.remove("hidden");
-    showStep(currentStep);
-});
+    function closeTour() {
+        document.getElementById('dashboard-tour').style.display = 'none';
+        // Optional: we can set a session or cookie to prevent future tours
+    }
 </script>
+@endpush
 @endsection
