@@ -23,6 +23,7 @@
         </div>
     @endif
 
+    <!-- Booking Options -->
     <div class="grid grid-cols-2 gap-6 h-screen">
         <!-- Current Bookings -->
         <div class="bg-white rounded-lg shadow-md p-6 flex flex-col items-center justify-center text-center">
@@ -78,4 +79,64 @@
         </div>
     </div>
 </div>
+
+<!-- Walkthrough Popup -->
+<div id="walkthrough-popup" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 hidden">
+    <div class="bg-white rounded-lg shadow-lg p-6 max-w-sm text-center relative">
+        <p id="walkthrough-text" class="text-gray-700 mb-4 font-medium"></p>
+        <div class="flex justify-between">
+            <button id="skip-walkthrough" class="text-red-500 font-semibold hover:underline">Skip</button>
+            <button id="next-walkthrough" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Next</button>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    const steps = [
+        { selector: "a[href*='current.bookings']", text: "This link takes you to your Current Bookings where you can view and manage active reservations." },
+        { selector: "a[href*='bookings.past']", text: "Here, you can access the Past Bookings to review completed reservations." },
+        { selector: "a[href*='bookings.upcoming']", text: "This section helps you stay updated about your Upcoming Bookings." },
+        { selector: "a[href*='/myproperties']", text: "Manage your listed properties under My Properties." }
+    ];
+
+    let currentStep = 0;
+
+    const popup = document.getElementById("walkthrough-popup");
+    const walkthroughText = document.getElementById("walkthrough-text");
+    const nextButton = document.getElementById("next-walkthrough");
+    const skipButton = document.getElementById("skip-walkthrough");
+
+    function showStep(stepIndex) {
+        if (stepIndex < steps.length) {
+            const step = steps[stepIndex];
+            walkthroughText.textContent = step.text;
+
+            document.querySelectorAll(steps.map(s => s.selector).join(",")).forEach(el => {
+                el.classList.remove("ring-4", "ring-blue-400");
+            });
+            const currentElement = document.querySelector(step.selector);
+            if (currentElement) {
+                currentElement.classList.add("ring-4", "ring-blue-400");
+                currentElement.scrollIntoView({ behavior: "smooth", block: "center" });
+            }
+        } else {
+            popup.classList.add("hidden");
+            document.querySelectorAll(steps.map(s => s.selector).join(",")).forEach(el => el.classList.remove("ring-4", "ring-blue-400"));
+        }
+    }
+
+    nextButton.addEventListener("click", () => {
+        currentStep++;
+        showStep(currentStep);
+    });
+
+    skipButton.addEventListener("click", () => {
+        popup.classList.add("hidden");
+    });
+
+    popup.classList.remove("hidden");
+    showStep(currentStep);
+});
+</script>
 @endsection
