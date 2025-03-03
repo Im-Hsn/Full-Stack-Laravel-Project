@@ -1,26 +1,5 @@
 <?php
 
-// use Illuminate\Support\Facades\Route;
-// use App\Mail\BookingStatusMail;
-// use Illuminate\Support\Facades\Mail;
-// use app\Models\Booking;
-// Route::get('/', function () {
-//     return view('welcome');
-// });
-
-
-
-// Route::get('/test-email/{status}/{bookingId}', function ($status, $bookingId) {
-//     $viewPath = resource_path('views/email-test.blade.php');
-//     if (!file_exists($viewPath)) {
-//         dd("View file not found at: " . $viewPath);
-//     }
-//     Mail::to('your-email@example.com')->send(new BookingStatusMail($status, $bookingId));
-//     return view('email-test', compact('status', 'bookingId'));
-// });
-
-
-
 use Illuminate\Support\Facades\Route;
 use App\Models\Booking;
 use Illuminate\Support\Facades\Mail;
@@ -127,27 +106,6 @@ Route::delete('/delete/{userid}/{propertyid}',function($userid,$propertyid){
         return redirect("/myproperties/{$userid}")->with('error', 'Failed to delete property. Please try again.');
     }
 });
-// // Booking confirmation route
-// Route::get('/booking/confirm/{bookingId}', function ($bookingId) {
-//     $booking = Booking::findOrFail($bookingId);
-//     if ($booking->status === 'pending') {
-//         $booking->status = 'confirmed';
-//         $booking->save();
-//         return "Booking #{$bookingId} has been confirmed.";
-//     }
-//     return "Booking #{$bookingId} cannot be confirmed. Current status: {$booking->status}.";
-// });
-
-// // Booking cancellation route
-// Route::get('/booking/cancel/{bookingId}', function ($bookingId) {
-//     $booking = Booking::findOrFail($bookingId);
-//     if ($booking->status === 'pending') {
-//         $booking->status = 'cancelled';
-//         $booking->save();
-//         return "Booking #{$bookingId} has been cancelled.";
-//     }
-//     return "Booking #{$bookingId} cannot be cancelled. Current status: {$booking->status}.";
-// });
 
 Route::get('/booking/confirm/{bookingId}', function ($bookingId) {
     $booking = Booking::findOrFail($bookingId);
