@@ -20,6 +20,18 @@ This Laravel-based vacation rental platform enables property owners (hosts) to l
 
 ## Features
 
+![Google Authentication](./Property-Management-App/resources/assets/login.png)
+
+![Host Dashboard](./Property-Management-App/resources/assets/tour.png)
+
+![Prperty Listing](./Property-Management-App/resources/assets/property.png)
+
+![Ticketing](./Property-Management-App/resources/assets/ticket.png)
+
+![Host-Guest Chat](./Property-Management-App/resources/assets/chat.png)
+
+![Earnings Page](./Property-Management-App/resources/assets/earnings.png)
+
 ### Host-Specific Features
 
 - **Google Authentication**: Secure sign-in via Google accounts
@@ -101,7 +113,7 @@ This Laravel-based vacation rental platform enables property owners (hosts) to l
 
 The platform uses the following key tables for host functionality:
 
-![Project Database](./Property-Management-App/Database.png)
+![Project Database](./Property-Management-App/resources/assets/Database.png)
 
 ### Users Table
 Stores both guest and host user information:
