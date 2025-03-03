@@ -101,7 +101,7 @@ This Laravel-based vacation rental platform enables property owners (hosts) to l
 
 The platform uses the following key tables for host functionality:
 
-![Project Database](./Host-management-App/Database.png)
+![Project Database](./Property-Management-App/Database.png)
 
 ### Users Table
 Stores both guest and host user information:
