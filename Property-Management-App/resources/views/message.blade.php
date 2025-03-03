@@ -142,13 +142,13 @@
 <script>
     // Firebase configuration
     const firebaseConfig = {
-        apiKey: "AIzaSyBqyrDQ7_AGj190ZgAv2gduJsF8BPpse5k",
+        apiKey: "", // Needs to be filled
         authDomain: "messaging-web-2e28d.firebaseapp.com",
         databaseURL: "https://messaging-web-2e28d-default-rtdb.firebaseio.com",
         projectId: "messaging-web-2e28d",
         storageBucket: "messaging-web-2e28d.firebasestorage.app",
-        messagingSenderId: "1030570848037",
-        appId: "1:1030570848037:web:49a83b4d63760f200a74cc",
+        messagingSenderId: "", // Needs to be filled
+        appId: "", // Needs to be filled
         measurementId: "G-RLCCVRSM25"
     };
 
